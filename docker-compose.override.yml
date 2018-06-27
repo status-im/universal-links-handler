@@ -1,0 +1,7 @@
+version: '3'
+services:
+  app:
+    image: nginx
+    volumes:
+      - ./etc/nginx.conf:/etc/nginx/nginx.conf
+      - ./src:/var/www
