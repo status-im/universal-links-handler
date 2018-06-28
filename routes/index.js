@@ -10,7 +10,6 @@ router.get('/.well-known/assetlinks.json', function(req, res) {
 router.get('/chat/:chatType/:chatId', function(req, res, next) {
   res.render('index', {
     title: 'Status.im join ' + req.params.chatId + ' chat',
-    chatId: req.params.chatId,
     path: req.originalUrl
   });
 });
@@ -18,7 +17,13 @@ router.get('/chat/:chatType/:chatId', function(req, res, next) {
 router.get('/user/:userId', function(req, res, next) {
   res.render('index', {
     title: 'Status.im view ' + req.params.userId + ' profile',
-    chatId: req.params.userId,
+    path: req.originalUrl
+  });
+});
+
+router.get('/browse/:url', function(req, res, next) {
+  res.render('index', {
+    title: 'Status.im browse ' + req.params.url + ' dapp',
     path: req.originalUrl
   });
 });

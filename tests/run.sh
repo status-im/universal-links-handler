@@ -11,3 +11,6 @@ shakedown GET /chat/public/abc
 
 shakedown GET /user/blah
   status 200
+
+shakedown GET /browse/www.test.com
+  status 200
