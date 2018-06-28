@@ -6,6 +6,11 @@ shakedown GET /.well-known/assetlinks.json
   content_type 'application/json'
   contains 'sha256_cert_fingerprints'
 
+shakedown GET /.well-known/apple-app-site-association
+  status 200
+  content_type 'application/json'
+  contains 'im.status.ethereum'
+
 shakedown GET /chat/public/abc
   status 200
 

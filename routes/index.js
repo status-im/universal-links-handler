@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var assetLinks = require('../resources/assetlinks.json');
+var appleSiteAssociation = require('../resources/apple-app-site-association.json');
 
 router.get('/health', function(req, res) {
   res.send('OK');
@@ -8,6 +9,10 @@ router.get('/health', function(req, res) {
 
 router.get('/.well-known/assetlinks.json', function(req, res) {
   res.json(assetLinks);
+});
+
+router.get('/.well-known/apple-app-site-association', function(req, res) {
+  res.json(appleSiteAssociation);
 });
 
 router.get('/chat/:chatType/:chatId', function(req, res, next) {

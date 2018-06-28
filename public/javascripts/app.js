@@ -5,10 +5,10 @@
   }
 
   function buildItunesUrl() {
-
     var iosId = $('meta[property="al:ios:app_store_id"]').attr("content");
-    return "https://itunes.apple.com/app/id" + iosId;
+    return "https://itunes.apple.com/app/status-ethereum-anywhere/id" + iosId;
   }
+
   function isAndroid(userAgent) {
     return userAgent.toLowerCase().indexOf("android") > -1;
   }
