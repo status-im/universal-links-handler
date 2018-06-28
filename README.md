@@ -19,6 +19,9 @@ docker-compose -p whatever up
 It will listen on port `8080` and mount the correct volumes so any change
 is then reflected.
 
+`node_modules` are mounted as a volume so in case you change `package-lock.json` 
+will need to be re-installed in the docker container.
+
 ### Production locally
 
 Start `docker-compose` with:
