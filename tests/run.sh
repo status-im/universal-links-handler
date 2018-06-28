@@ -14,3 +14,7 @@ shakedown GET /user/blah
 
 shakedown GET /browse/www.test.com
   status 200
+
+shakedown GET /health
+  status 200
+  contains 'OK'
