@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 var assetLinks = require('../resources/assetlinks.json');
 
+router.get('/health', function(req, res) {
+  res.send('OK');
+});
 
 router.get('/.well-known/assetlinks.json', function(req, res) {
   res.json(assetLinks);
