@@ -1,7 +1,11 @@
 version: '3'
 services:
   app:
-    image: nginx
+    image: node:9-alpine
+    working_dir: /srv
     volumes:
-      - ./etc/nginx.conf:/etc/nginx/nginx.conf
-      - ./src:/var/www
+      - ./:/srv
+      - node_modules:/srv/node_modules
+    command: npm run watch
+volumes:
+  node_modules:

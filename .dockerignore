@@ -1,3 +1,7 @@
 Dockerfile
+.dockerignore
 README.md
 tests/
+node_modules
+npm-debug.log
+.git

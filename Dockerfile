@@ -1,4 +1,14 @@
-FROM nginx
+FROM node:9-alpine
 
-ADD etc/nginx.conf /etc/nginx/nginx.conf
-ADD src /var/www
+RUN mkdir -p /srv
+
+ADD package.json /srv
+ADD package-lock.json /srv
+
+WORKDIR /srv
+
+RUN npm install
+
+ADD . /srv
+
+CMD npm start
