@@ -17,7 +17,7 @@ node('linux') {
 			credentialsId: "dockerhub-statusteam-auto", url: ""
     ]) {
       image.push()
-      image.push('latest')
+      image.push('deploy')
     }
   }
 }
