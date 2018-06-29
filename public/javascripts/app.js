@@ -17,13 +17,17 @@
     return userAgent.toLowerCase().indexOf("iphone") > -1;
   }
 
+  function testFlightURL() {
+    return "https://status.im/success";
+  }
+
   $(document).ready(function () {
 
     var appStoreLink = $("#app-store-link");
     if (isAndroid(navigator.userAgent)) {
       appStoreLink.attr('href', buildPlayStoreUrl());
     } else if (isIOS(navigator.userAgent)) {
-      appStoreLink.attr('href', buildItunesUrl());
+      appStoreLink.attr('href', testFlightURL());
     } else {
       appStoreLink.attr('href', buildPlayStoreUrl());
     }
