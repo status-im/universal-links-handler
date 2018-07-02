@@ -16,8 +16,8 @@ node('linux') {
   }
 
   stage('Tests') {
-    image.withRun('-p 8080:8080') { c ->
-      sh 'tests/run.sh -u localhost:8080'
+    image.withRun('-p 8080:80') { c ->
+      sh 'tests/run.sh -u 127.0.0.1:8080'
     }
   }
 
