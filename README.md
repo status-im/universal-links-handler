@@ -47,6 +47,11 @@ Then you can run `bash tests/run.sh -u localhost:8080` or to run against against
 
 Uses the awesome `https://github.com/robwhitby/shakedown`
 
+The pipeline is at:
+
+`https://jenkins.status.im/job/misc/job/universal-links-handler/`
+
 ## Deployment
+
 
 The code is automatically deployed when pushed to master
