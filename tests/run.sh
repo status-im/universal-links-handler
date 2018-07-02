@@ -11,13 +11,29 @@ shakedown GET /.well-known/apple-app-site-association
   content_type 'application/json'
   contains 'im.status.ethereum'
 
-shakedown GET /chat/public/abc
+shakedown GET /chat/public/abc?redirect=0
   status 200
 
-shakedown GET /user/blah
+# Android test
+shakedown GET /chat/public/abc -H "User-Agent: Mozilla/5.0 (Linux; Android 7.0; SM-G892A Build/NRD90M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/60.0.3112.107 Mobile Safari/537.36"
+  header_contains 'Location' 'https://play.google.com/store/apps/details?id=im.status.ethereum'
+  status 302
+
+# IOS
+shakedown GET /chat/public/abc -H "User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"
+  header_contains 'Location' 'https://status.im/success'
+  status 302
+
+# Anything else
+shakedown GET /chat/public/abc -H "User-Agent: Unknown"
+  header_contains 'Location' 'https://status.im'
+  status 302
+
+
+shakedown GET /user/blah?redirect=0
   status 200
 
-shakedown GET /browse/www.test.com
+shakedown GET /browse/www.test.com?redirect=0
   status 200
 
 shakedown GET /health
