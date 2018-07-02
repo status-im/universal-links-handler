@@ -53,5 +53,4 @@ The pipeline is at:
 
 ## Deployment
 
-
 The code is automatically deployed when pushed to master
