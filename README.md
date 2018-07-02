@@ -48,3 +48,5 @@ Then you can run `bash tests/run.sh -u localhost:8080` or to run against against
 Uses the awesome `https://github.com/robwhitby/shakedown`
 
 ## Deployment
+
+The code is automatically deployed when pushed to master

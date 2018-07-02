@@ -1,4 +1,7 @@
+properties([disableConcurrentBuilds()])
+
 node('linux') {
+
   def image_name = 'statusteam/universal-links-handler'
   def commit
   def image
@@ -10,6 +13,12 @@ node('linux') {
 
   stage('Build') {
     image = docker.build(image_name + ':' + commit)
+  }
+
+  stage('Tests') {
+    image.withRun('-p 8080:80 -e PORT=80') { c ->
+      sh 'tests/run.sh -u 127.0.0.1:8080'
+    }
   }
 
   stage('Publish') {

@@ -1,5 +1,11 @@
 #!/bin/bash
+
 source tests/shakedown.sh
+
+until $(curl --output /dev/null --silent --head --fail $BASE_URL/health); do
+    printf '.'
+    sleep 1
+done
 
 shakedown GET /.well-known/assetlinks.json
   status 200
