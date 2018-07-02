@@ -1,4 +1,5 @@
 #!/bin/bash
+
 source tests/shakedown.sh
 
 until $(curl --output /dev/null --silent --head --fail $BASE_URL/health); do
