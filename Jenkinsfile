@@ -17,7 +17,7 @@ node('linux') {
 
   stage('Tests') {
     image.withRun('-p 8080:8080') { c ->
-      sh 'tests/shakedown.sh -u localhost:8080'
+      sh 'tests/run.sh -u localhost:8080'
     }
   }
 
