@@ -22,8 +22,7 @@
   }
 
   $(document).ready(function () {
-
-    var appStoreLink = $("#app-store-link");
+    var appStoreLink = $('.app-store-link');
     if (isAndroid(navigator.userAgent)) {
       appStoreLink.attr('href', buildPlayStoreUrl());
     } else if (isIOS(navigator.userAgent)) {
@@ -31,5 +30,5 @@
     } else {
       appStoreLink.attr('href', buildPlayStoreUrl());
     }
-    })
+  });
 }());

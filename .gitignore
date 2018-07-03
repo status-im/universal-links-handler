@@ -18,9 +18,11 @@ node_modules
 *.log
 *.gz
 
-
 # Coveralls
 coverage
 
 # Benchmarking
 benchmarks/graphs
+
+# Jetbrains
+.idea
