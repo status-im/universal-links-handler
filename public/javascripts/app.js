@@ -21,6 +21,10 @@
     return "https://status.im/success";
   }
 
+  function webURL() {
+    return "https://status.im/";
+  }
+
   $(document).ready(function () {
     var appStoreLink = $('.app-store-link');
     if (isAndroid(navigator.userAgent)) {
@@ -28,7 +32,7 @@
     } else if (isIOS(navigator.userAgent)) {
       appStoreLink.attr('href', testFlightURL());
     } else {
-      appStoreLink.attr('href', buildPlayStoreUrl());
+      appStoreLink.attr('href', webURL());
     }
   });
 }());

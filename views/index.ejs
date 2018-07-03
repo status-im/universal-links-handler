@@ -3,11 +3,11 @@
   <head>
     <title><%= title %></title>
 
-    <meta property="al:ios:url" content="app://get.status.im<%= path %>" />
+    <meta property="al:ios:url" content="status-im:/<%= path %>" />
     <meta property="al:ios:app_store_id" content="1178893006" />
     <meta property="al:ios:app_name" content="Status — Ethereum. Anywhere" />
 
-    <meta property="al:android:url" content="app://get.status.im<%= path %>" />
+    <meta property="al:android:url" content="status-im:/<%= path %>" />
     <meta property="al:android:package" content="im.status.ethereum" />
     <meta property="al:android:app_name" content="Status — Ethereum. Anywhere" />
 
@@ -16,22 +16,20 @@
   </head>
   <body>
     <header class="header">
-      <a class="logo">
+      <a class="logo" href="https://status.im">
         <img src="/images/status-logo-blue-w-text.png" />
       </a>
     </header>
     <div class="try-it-now">
       <a class='app-store-link' href='#'>
-        Don't have <strong>Status</strong> yet? Try it now!
+        Download Status!
       </a>
     </div>
     <div class="content">
-      <a class="app-store-link">
-        <img src="/images/status-logo-blue.png">
-      </a>
+      <img src="/images/status-logo-blue.png">
       <h2><%= title %></h2>
-      <a class="app-store-link button" href="#">
-        Try Status now
+      <a class="open-link button" href="status-im:/<%= path %>">
+        Open in Status
       </a>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
