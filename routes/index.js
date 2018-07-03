@@ -13,20 +13,19 @@ router.get('/',  function (req, res, next) {
   }
 
   if (req.query.redirect) {
-  return next();
+    return next();
   }
 
   var userAgent = req.headers['user-agent'];
 
   if (isAndroid(userAgent)) {
-  return res.redirect("https://play.google.com/store/apps/details?id=im.status.ethereum");
+    return res.redirect("https://play.google.com/store/apps/details?id=im.status.ethereum");
   } else if (isIOS(userAgent)) {
-  return res.redirect("https://status.im/success")
+    return res.redirect("https://status.im/success");
   }
 
-  return res.redirect("https://status.im")
-
-})
+  return res.redirect("https://status.im");
+});
 
 router.get('/health', function(req, res) {
   res.send('OK');
@@ -41,22 +40,23 @@ router.get('/.well-known/apple-app-site-association', function(req, res) {
 });
 
 router.get('/chat/:chatType/:chatId', function(req, res, next) {
+  const { chatId, chatType } = req.params;
   res.render('index', {
-    title: 'Status.im join ' + req.params.chatId + ' chat',
+    title: `Join the ${chatType} chat: #${chatId} in Status`,
     path: req.originalUrl
   });
 });
 
 router.get('/user/:userId', function(req, res, next) {
   res.render('index', {
-    title: 'Status.im view ' + req.params.userId + ' profile',
+    title: `View user ${req.params.userId}'s profile in Status`,
     path: req.originalUrl
   });
 });
 
 router.get('/browse/:url', function(req, res, next) {
   res.render('index', {
-    title: 'Status.im browse ' + req.params.url + ' dapp',
+    title: `Browse to ${req.params.url} in Status`,
     path: req.originalUrl
   });
 });

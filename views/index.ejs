@@ -15,7 +15,25 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-    <a id='app-store-link' href='#'>Don't have status yet, try it</a>
+    <header class="header">
+      <a class="logo">
+        <img src="/images/status-logo-blue-w-text.png" />
+      </a>
+    </header>
+    <div class="try-it-now">
+      <a class='app-store-link' href='#'>
+        Don't have <strong>Status</strong> yet? Try it now!
+      </a>
+    </div>
+    <div class="content">
+      <a class="app-store-link">
+        <img src="/images/status-logo-blue.png">
+      </a>
+      <h2><%= title %></h2>
+      <a class="app-store-link button" href="#">
+        Try Status now
+      </a>
+    </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script type='text/javascript' src='/javascripts/app.js'></script>
   </body>
