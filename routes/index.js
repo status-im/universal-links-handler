@@ -18,6 +18,10 @@ router.get('/',  function (req, res, next) {
 
   var userAgent = req.headers['user-agent'];
 
+  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+  res.header('Expires', '-1');
+  res.header('Pragma', 'no-cache');
+
   if (isAndroid(userAgent)) {
     return res.redirect("https://play.google.com/store/apps/details?id=im.status.ethereum");
   } else if (isIOS(userAgent)) {
