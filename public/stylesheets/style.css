@@ -3,13 +3,14 @@
 }
 
 body {
+  background-color: white;
   font: 14px "Verdana", Helvetica, Arial, sans-serif;
   margin: 0;
   padding: 0;
 }
 
 a {
-  color: #00B7FF;
+  color: #4360DF;
 }
 
 h1 {
@@ -38,7 +39,7 @@ h2 {
 
 .try-it-now {
   align-items: center;
-  background: #4957B8;
+  background: #4360DF;
   display: flex;
   flex-direction: column;
   font-size: 1rem;
@@ -69,9 +70,9 @@ h2 {
 }
 
 .content .button {
-  background-color: #00B7FF;
+  background-color: rgba(67, 96, 223, 0.1);
   border-radius: 100px;
-  color: white;
+  color: #4360df;
   font-size: 1.2rem;
   font-weight: 400;
   margin-top: 3rem;
