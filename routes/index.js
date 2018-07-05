@@ -58,7 +58,7 @@ router.get('/user/:userId', function(req, res, next) {
   });
 });
 
-router.get('/browse/:url', function(req, res, next) {
+router.get('/browse/:url(*)', function(req, res, next) {
   res.render('index', {
     title: `Browse to ${req.params.url} in Status`,
     path: req.originalUrl
