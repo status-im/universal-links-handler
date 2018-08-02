@@ -92,6 +92,11 @@ h2 {
   text-align: center;
 }
 
+.content h2 {
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
 .content img {
   border-radius: 50%;
   height: 125px;
