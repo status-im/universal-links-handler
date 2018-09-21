@@ -1,6 +1,6 @@
 # Universal links handler
 
-App to handle universal links
+App to handle universal links served at http://get.status.im
 
 ## Getting Started
 
