@@ -18,7 +18,7 @@
   }
 
   function testFlightURL() {
-    return "https://status.im/success";
+    return "https://testflight.apple.com/join/J8EuJmey";
   }
 
   function webURL() {

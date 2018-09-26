@@ -24,7 +24,7 @@ shakedown GET / -H "User-Agent: Mozilla/5.0 (Linux; Android 7.0; SM-G892A Build/
 
 # IOS
 shakedown GET / -H "User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"
-  header_contains 'Location' 'https://status.im/success'
+  header_contains 'Location' 'https://testflight.apple.com/join/J8EuJmey'
   status 302
 
 # Anything else

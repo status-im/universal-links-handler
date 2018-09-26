@@ -25,7 +25,7 @@ router.get('/',  function (req, res, next) {
   if (isAndroid(userAgent)) {
     return res.redirect("https://play.google.com/store/apps/details?id=im.status.ethereum");
   } else if (isIOS(userAgent)) {
-    return res.redirect("https://status.im/success");
+    return res.redirect("https://testflight.apple.com/join/J8EuJmey");
   }
 
   return res.redirect("https://status.im");
