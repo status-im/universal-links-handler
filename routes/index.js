@@ -53,7 +53,7 @@ router.get('/chat/:chatType/:chatId', function(req, res, next) {
 
 router.get('/user/:userId', function(req, res, next) {
   res.render('index', {
-    title: `View user ${req.params.userId}'s profile in Status`,
+    title: `View user ${req.params.userId} profile in Status`,
     path: req.originalUrl
   });
 });
