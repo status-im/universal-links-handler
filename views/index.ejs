@@ -12,7 +12,6 @@
     <meta property="al:android:package" content="im.status.ethereum" />
     <meta property="al:android:app_name" content="Status — Ethereum. Anywhere" />
 
-
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
@@ -27,8 +26,11 @@
       </a>
     </div>
     <div class="content">
-      <img src="/images/status-logo-symbol.svg">
+      <img class="banner" src="/images/status-logo-symbol.svg">
       <h2><%= title %></h2>
+      <%if (locals.qrCodeDataUri) { %>
+        <img class="qr-code" src="<%= qrCodeDataUri %>" />
+      <% } %>
       <a class="open-link button" href="status-im:/<%= path %>">
         Open in Status
       </a>
