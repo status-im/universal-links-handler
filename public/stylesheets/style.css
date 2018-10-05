@@ -109,7 +109,7 @@ a.privacy-policy {
   word-wrap: break-word;
 }
 
-.content img {
+.content img.banner {
   border-radius: 50%;
   height: 125px;
   width: 125px;

@@ -1,7 +1,9 @@
 var express = require('express');
-var router = express.Router();
 var assetLinks = require('../resources/assetlinks.json');
 var appleSiteAssociation = require('../resources/apple-app-site-association.json');
+var { makeQrCodeDataUri } = require('../utils/qrcodeUtils');
+
+var router = express.Router();
 
 router.get('/',  function (req, res, next) {
   function isAndroid(userAgent) {
@@ -52,10 +54,15 @@ router.get('/chat/:chatType/:chatId', function(req, res, next) {
 });
 
 router.get('/user/:userId', function(req, res, next) {
-  res.render('index', {
-    title: `View user ${req.params.userId} profile in Status`,
-    path: req.originalUrl
-  });
+  const { userId } = req.params;
+  const options = {
+    title: `View user ${userId} profile in Status`,
+    path: req.originalUrl,
+  };
+  makeQrCodeDataUri(userId).then(
+    qrCodeDataUri => res.render('index', { ...options, qrCodeDataUri }),
+    error => res.render('index', options)
+  );
 });
 
 router.get('/browse/:url(*)', function(req, res, next) {
