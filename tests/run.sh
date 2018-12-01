@@ -48,3 +48,6 @@ shakedown GET /browse/www.test.com/blah/blah
 shakedown GET /health
   status 200
   contains 'OK'
+
+shakedown GET /extension/blah
+  status 200
