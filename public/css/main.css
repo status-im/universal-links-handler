@@ -59,6 +59,10 @@ p {
   color: rgba(0, 0, 0, 0.8);
   margin-bottom: 40px; }
 
+.break-word{
+  word-wrap: break-word;
+}
+
 .teaser-1,
 .teaser-2 {
   line-height: 36px;
