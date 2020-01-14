@@ -35,4 +35,14 @@
       appStoreLink.attr('href', webURL());
     }
   });
+
+  var clipboard = new ClipboardJS('.copy a');
+
+  clipboard.on('success', function(e) {
+    $('.copy a').text('Copied');
+    setTimeout(function() {
+      $('.copy a').text('Copy');
+    }, 5000);
+  });
+
 }());
