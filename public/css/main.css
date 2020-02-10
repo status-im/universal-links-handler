@@ -20,7 +20,7 @@
   display: inline-block;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 70px;
+  max-width: 10ch;
   margin: 0 2px 0 4px;
 }
 
