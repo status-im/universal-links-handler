@@ -49,7 +49,8 @@ router.get('/chat/:chatType/:chatId', function(req, res, next) {
   const { chatId, chatType } = req.params;
   res.render('index', {
     title: `Join the ${chatType} chat: #${chatId} in Status`,
-    path: req.originalUrl
+    path: req.originalUrl,
+    id: `${chatId}`
   });
 });
 
@@ -58,6 +59,7 @@ router.get('/user/:userId', function(req, res, next) {
   const options = {
     title: `View user ${userId} profile in Status`,
     path: req.originalUrl,
+    id: `${userId}`
   };
   makeQrCodeDataUri(userId).then(
     qrCodeDataUri => res.render('index', { ...options, qrCodeDataUri }),
@@ -70,6 +72,7 @@ router.get('/extension/:extensionEndpoint', function(req, res, next) {
   const options = {
     title: `Open extension ${extensionEndpoint} in Status`,
     path: req.originalUrl,
+    id: `${extensionEndpoint}`
   };
   makeQrCodeDataUri('https://get.status.im/extension/' + extensionEndpoint).then(
     qrCodeDataUri => res.render('index', { ...options, qrCodeDataUri }),
@@ -80,7 +83,8 @@ router.get('/extension/:extensionEndpoint', function(req, res, next) {
 router.get('/browse/:url(*)', function(req, res, next) {
   res.render('index', {
     title: `Browse to ${req.params.url} in Status`,
-    path: req.originalUrl
+    path: req.originalUrl,
+    id: `${req.params.url}`
   });
 });
 
