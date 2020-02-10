@@ -163,19 +163,19 @@
       <div class="container">
         <div class="row">
           <div class="col-md-12">
-            <h3 class="break-word"><%= id %></h3>
+            <h3 class="break-word"><%= chatName %></h3>
             <%if (locals.qrCodeDataUri) { %>
               <img class="qr-code" src="<%= qrCodeDataUri %>" />
             <% } %>
             <div class="row">
               <div class="col-md-6 ml-auto mr-auto text-center">
                 <div class="copy">
-                  <div class="inner" id="copy-target"><%= id %></div>
+                  <div class="inner" id="copy-target"><%= chatId %></div>
                   <a href="#" data-clipboard-target="#copy-target">Copy</a>
                 </div>
                 <a href="https://status.im/get/" class="btn btn-purple-fill">Download Status</a>
                 <div class="info">
-                  Chat and transact with <span><%= id %></span> in Status.
+                  <%- info %>
                 </div>
               </div>
             </div>

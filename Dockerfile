@@ -7,8 +7,8 @@ ADD package-lock.json /srv
 
 WORKDIR /srv
 
-RUN npm install
+RUN yarn install
 
 ADD . /srv
 
-CMD npm start
+CMD yarn start
