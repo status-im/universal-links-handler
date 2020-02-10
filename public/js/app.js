@@ -36,6 +36,10 @@
     }
   });
 
+  $('.copy a').on('click', function(event) {
+    event.preventDefault();
+  });
+
   var clipboard = new ClipboardJS('.copy a');
 
   clipboard.on('success', function(e) {

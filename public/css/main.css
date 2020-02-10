@@ -55,6 +55,7 @@ img.qr-code{
   width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: left;
 }
 
 .break-word{
