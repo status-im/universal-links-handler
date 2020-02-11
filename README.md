@@ -1,6 +1,6 @@
 # Universal links handler
 
-App to handle universal links served at http://get.status.im
+App to handle universal links served at http://join.status.im
 
 ## Getting Started
 
@@ -43,7 +43,7 @@ It will build the image and start the container listening on port `8080`
 To run the tests, first start the container, either in `production` or `development` mode.
 
 Then you can run `bash tests/run.sh -u localhost:8080` or to run against against the live server
-`bash tests/run.sh -u http://get.status.im`
+`bash tests/run.sh -u http://join.status.im`
 
 Uses the awesome `https://github.com/robwhitby/shakedown`
 
