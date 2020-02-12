@@ -39,13 +39,18 @@ router.get('/.well-known/apple-app-site-association', function(req, res) {
 
 router.get('/chat/:chatType/:chatId', function(req, res, next) {
   const { chatId, chatType } = req.params;
-  res.render('index', {
-    title: `Join the ${chatType} chat: #${chatId} in Status`,
-    info: `Chat in a public channel <span>#${chatId}</span> in Status.`,
+  chatName = `#${chatId}`;
+  const options = {
+    title: `Join ${chatType} channel #${chatId} on Status`,
+    info: `Join public channel <span>#${chatId}</span> on Status.`,
     path: req.originalUrl,
     chatId: chatId,
-    chatName: chatId,
-  });
+    chatName: chatName,
+  };
+  utils.makeQrCodeDataUri(chatName).then(
+    qrCodeDataUri => res.render('index', { ...options, qrCodeDataUri }),
+    error => res.render('index', options)
+  );
 });
 
 router.get('/user/:userId', function(req, res, next) {
