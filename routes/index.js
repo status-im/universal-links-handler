@@ -39,13 +39,19 @@ router.get('/.well-known/apple-app-site-association', function(req, res) {
 
 router.get('/chat/:chatType/:chatId', function(req, res, next) {
   const { chatId, chatType } = req.params;
+  /* Make button open chat if on Android */
+  let buttonTitle = 'Download Status'
+  let buttonUrl = 'https://status.im/get/'
+  if (utils.isAndroid(req.headers['user-agent'])) {
+    buttonTitle = 'Open in Status'
+    buttonUrl = `status-im://chat/${chatType}/${chatId}`
+  }
   chatName = `#${chatId}`;
   const options = {
     title: `Join ${chatType} channel #${chatId} on Status`,
     info: `Join public channel <span>#${chatId}</span> on Status.`,
     path: req.originalUrl,
-    chatId: chatId,
-    chatName: chatName,
+    chatId, chatName, buttonTitle, buttonUrl
   };
   utils.makeQrCodeDataUri(chatName).then(
     qrCodeDataUri => res.render('index', { ...options, qrCodeDataUri }),
@@ -55,8 +61,15 @@ router.get('/chat/:chatType/:chatId', function(req, res, next) {
 
 router.get('/user/:userId', function(req, res, next) {
   const { userId } = req.params;
-  chatName = userId
+  /* Make button open user profile if on Android */
+  let buttonTitle = 'Download Status'
+  let buttonUrl = 'https://status.im/get/'
+  if (utils.isAndroid(req.headers['user-agent'])) {
+    buttonTitle = 'Open in Status'
+    buttonUrl = `status-im://user/${userId}`
+  }
   /* chat keys can be resolved to chat names */
+  chatName = userId
   if (utils.isChatKey(userId)) {
     chatName = StatusIm.chatKeyToChatName(userId)
   }
@@ -65,7 +78,7 @@ router.get('/user/:userId', function(req, res, next) {
     info: `Chat and transact with <span>${userId}</span> in Status.`,
     path: req.originalUrl,
     chatId: userId,
-    chatName: chatName,
+    chatName, buttonTitle, buttonUrl
   };
   utils.makeQrCodeDataUri(userId).then(
     qrCodeDataUri => res.render('index', { ...options, qrCodeDataUri }),
@@ -81,6 +94,8 @@ router.get('/extension/:extensionEndpoint', function(req, res, next) {
     path: req.originalUrl,
     chatId: extensionEndpoint,
     chatName: extensionEndpoint,
+    buttonTitle: 'Download Status',
+    buttonUrl: 'https://status.im/get/',
   };
   utils.makeQrCodeDataUri('https://join.status.im/extension/' + extensionEndpoint).then(
     qrCodeDataUri => res.render('index', { ...options, qrCodeDataUri }),
