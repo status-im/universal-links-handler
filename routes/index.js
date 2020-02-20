@@ -86,23 +86,6 @@ router.get('/user/:userId', function(req, res, next) {
   );
 });
 
-router.get('/extension/:extensionEndpoint', function(req, res, next) {
-  const { extensionEndpoint } = req.params;
-  const options = {
-    title: `Open extension ${extensionEndpoint} in Status`,
-    info: `Open the <span>${extensionEndpoint}</span> extension in Status.`,
-    path: req.originalUrl,
-    chatId: extensionEndpoint,
-    chatName: extensionEndpoint,
-    buttonTitle: 'Download Status',
-    buttonUrl: 'https://status.im/get/',
-  };
-  utils.makeQrCodeDataUri('https://join.status.im/extension/' + extensionEndpoint).then(
-    qrCodeDataUri => res.render('index', { ...options, qrCodeDataUri }),
-    error => res.render('index', options)
-  );
-});
-
 router.get('/browse/:url(*)', function(req, res, next) {
   res.render('index', {
     title: `Browse to ${req.params.url} in Status`,
