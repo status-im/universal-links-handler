@@ -1,29 +1,29 @@
-var QRCode = require('qrcode')
+const QRCode = require('qrcode')
+const uts46 = require('idna-uts46-hx')
+const univeil = require('univeil')
 
-function isChatKey(str) {
-  if (typeof str != "string") {
-    throw TypeError("Expected chat key to be a string.")
-  }
-  /* Chat keys are prefixed with 0x04 and follwed by
-   * two 32 byte hexadecimal digits. */
-  return /^0[xX]04[0-9a-fA-F]{128}$/.test(str.trim())
-}
+const isAndroid = (userAgent) => (
+  userAgent.toLowerCase().indexOf("android") > -1
+)
 
-function makeQrCodeDataUri(x) {
-  return QRCode.toDataURL(x, {width: 300})
-}
+const isIOS = (userAgent) => (
+  userAgent.toLowerCase().indexOf("iphone") > -1
+)
 
-function isAndroid(userAgent) {
-  return userAgent.toLowerCase().indexOf("android") > -1;
-}
+const makeQrCodeDataUri = (x) => (
+  QRCode.toDataURL(x, {width: 300})
+)
 
-function isIOS(userAgent) {
-  return userAgent.toLowerCase().indexOf("iphone") > -1;
-}
+const normalizeEns = (name) => (
+  name ? uts46.toUnicode(name, {useStd3ASCII: true, transitional: false}) : name
+)
+
+const showSpecialChars = (str) => univeil(str)
 
 module.exports = {
-  isChatKey,
   isAndroid,
   isIOS,
   makeQrCodeDataUri,
+  normalizeEns,
+  showSpecialChars,
 }
