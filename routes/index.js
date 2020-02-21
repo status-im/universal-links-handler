@@ -18,6 +18,7 @@ router.get('/.well-known/apple-app-site-association', (req, res) => {
   res.json(appleSiteAssociation)
 })
 
+/* Helper for generating pages */
 const genPage = (res, options) => {
   let opts = {
     ...options,
@@ -53,7 +54,14 @@ router.get('/browse/:url(*)', handleSite) /* Legacy */
 
 /* Open User Profile from ENS Name in Status */
 const handleEnsName = (req, res) => {
-  const username = utils.normalizeEns(req.params[0])
+  let username
+  try {
+    username = utils.normalizeEns(req.params[0])
+  } catch(error) { /* ENS names have the widest regex: .+ */
+    console.error(`Failed to parse: ${req.params[0]}, Error:`, error.message)
+    res.render('index', { title: 'Invalid Username Format!', error })
+    return
+  }
   genPage(res, {
     title: `Join @${username} in Status`,
     info: `Chat and transact with <span>@${username}</span> in Status.`,
