@@ -1,22 +1,12 @@
+var path = require('path');
 var express = require('express')
 var StatusIm = require('js-status-chat-name')
+var links = require('../resources/links.json')
 var assetLinks = require('../resources/assetlinks.json')
 var appleSiteAssociation = require('../resources/apple-app-site-association.json')
 var utils = require('../utils')
 
 var router = express.Router()
-
-router.get('/health', (req, res) => {
-  res.send('OK')
-})
-
-router.get('/.well-known/assetlinks.json', (req, res) => {
-  res.json(assetLinks)
-})
-
-router.get('/.well-known/apple-app-site-association', (req, res) => {
-  res.json(appleSiteAssociation)
-})
 
 /* Helper for generating pages */
 const genPage = (res, options) => {
@@ -49,31 +39,6 @@ const handleSite = (req, res) => {
   })
 }
 
-router.get('/b/:url(*)', handleSite)      
-router.get('/browse/:url(*)', handleSite) /* Legacy */
-
-/* Open User Profile from ENS Name in Status */
-const handleEnsName = (req, res) => {
-  let username
-  try {
-    username = utils.normalizeEns(req.params[0])
-  } catch(error) { /* ENS names have the widest regex: .+ */
-    console.error(`Failed to parse: ${req.params[0]}, Error:`, error.message)
-    res.render('index', { title: 'Invalid Username Format!', error })
-    return
-  }
-  genPage(res, {
-    title: `Join @${username} in Status`,
-    info: `Chat and transact with <span>@${username}</span> in Status.`,
-    copyTarget: username,
-    headerName: `@${utils.showSpecialChars(username)}`,
-    path: fullUrl(req),
-  })
-}
-
-router.get(/^\/@(.+)$/, handleEnsName)
-router.get(/^\/user\/@(.+)$/, handleEnsName) /* Legacy */
-
 /* Open User Profile from Chat Key in Status */
 const handleChatKey = (req, res) => {
   const chatKey = req.params[0]
@@ -87,8 +52,24 @@ const handleChatKey = (req, res) => {
   })
 }
 
-router.get(/^\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey)
-router.get(/^\/user\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey) /* Legacy */
+/* Open User Profile from ENS Name in Status */
+const handleEnsName = (req, res) => {
+  let username
+  try {
+    username = utils.normalizeEns(req.params[0])
+  } catch(error) { /* ENS names have the widest regex: .+ */
+    console.error(`Failed to parse: "${req.params[0]}", Error:`, error.message)
+    res.render('index', { title: 'Invalid Username Format!', error })
+    return
+  }
+  genPage(res, {
+    title: `Join @${username} in Status`,
+    info: `Chat and transact with <span>@${username}</span> in Status.`,
+    copyTarget: username,
+    headerName: `@${utils.showSpecialChars(username)}`,
+    path: fullUrl(req, `/@${username}`),
+  })
+}
 
 /* Open Public Channel in Status */
 const handlePublicChannel = (req, res) => {
@@ -102,6 +83,25 @@ const handlePublicChannel = (req, res) => {
   })
 }
 
+router.get('/.well-known/assetlinks.json', (req, res) => {
+  res.json(assetLinks)
+})
+
+router.get('/.well-known/apple-app-site-association', (req, res) => {
+  res.json(appleSiteAssociation)
+})
+
+router.get('/health', (req, res) => res.send('OK'))
+
+router.get('/b/:url(*)', handleSite)      
+router.get('/browse/:url(*)', handleSite) /* Legacy */
+
+router.get(/^\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey)
+router.get(/^\/user\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey) /* Legacy */
+
+router.get(/^\/@(.+)$/, handleEnsName)
+router.get(/^\/user\/(.+)$/, handleEnsName) /* Legacy */
+
 router.get(/^\/([a-z0-9-]+)$/, handlePublicChannel)
 router.get(/^\/chat\/public\/([a-z0-9-]+)$/, handlePublicChannel)
 
@@ -110,19 +110,19 @@ router.get('*',  (req, res, next) => {
   if (req.query.redirect) {
     return next()
   }
-
   res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate')
   res.header('Expires', '-1')
   res.header('Pragma', 'no-cache')
 
-  var userAgent = req.headers['user-agent']
+  let userAgent = req.headers['user-agent']
+  let redirect = links.getStatus
   if (utils.isAndroid(userAgent)) {
-    return res.redirect("https://play.google.com/store/apps/details?id=im.status.ethereum")
+    redirect = links.playStore
   } else if (utils.isIOS(userAgent)) {
-    return res.redirect("https://testflight.apple.com/join/J8EuJmey")
+    redirect = links.appleStore
   }
 
-  return res.redirect("https://status.im/get/")
+  return res.redirect(redirect)
 })
 
 module.exports = router
