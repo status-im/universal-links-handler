@@ -35,8 +35,8 @@ const fullUrl = (req, path) => (
   `${req.protocol}://${req.hostname}${path ? path : req.originalUrl}`
 )
 
-/* Website/Dapp */
-router.get('/b/:url(*)', (req, res) => {
+/* Open Website/Dapp in Status */
+const handleSite = (req, res) => {
   let { url } = req.params
   url = url.replace(/https?:\/\//, '')
   genPage(res, {
@@ -46,50 +46,44 @@ router.get('/b/:url(*)', (req, res) => {
     headerName: `<a href="https://${url}">${url}</a>`,
     path: fullUrl(req, `/b/${url}`),
   })
-})
+}
 
-/* Legacy Website/Dapp */
-router.get('/browse/:url(*)', (req, res) => {
-  res.redirect(`/b/${req.params.url}`)
-})
+router.get('/b/:url(*)', handleSite)      
+router.get('/browse/:url(*)', handleSite) /* Legacy */
 
-/* User ENS Name */
-router.get(/^\/@(.+)$/, (req, res) => {
-  const username = req.params[0]
+/* Open User Profile from ENS Name in Status */
+const handleEnsName = (req, res) => {
+  const username = utils.normalizeEns(req.params[0])
   genPage(res, {
     title: `Join @${username} in Status`,
     info: `Chat and transact with <span>@${username}</span> in Status.`,
     copyTarget: username,
-    headerName: `@${username}`,
+    headerName: `@${utils.showSpecialChars(username)}`,
     path: fullUrl(req),
   })
-})
+}
 
-/* Legacy User, key or name */
-router.get('/user/:userId', (req, res) => {
-  const { userId } = req.params
-  if (userId.startsWith('0x04')) {
-    res.redirect(`/${userId}`) /* Chat key */
-  } else {
-    res.redirect(`/@${userId}`) /* ENS name */
-  }
-})
+router.get(/^\/@(.+)$/, handleEnsName)
+router.get(/^\/user\/@(.+)$/, handleEnsName) /* Legacy */
 
-/* User Chat Key */
-router.get(/^\/(0x04[a-f0-9]{128})$/, (req, res) => {
+/* Open User Profile from Chat Key in Status */
+const handleChatKey = (req, res) => {
   const chatKey = req.params[0]
   chatName = StatusIm.chatKeyToChatName(chatKey)
   genPage(res, {
     title: `Join ${chatName} in Status`,
-    info: `Chat and transact with <span>@${chatKey}</span> in Status.`,
+    info: `Chat and transact with <span>${chatKey}</span> in Status.`,
     copyTarget: chatKey,
     headerName: chatName,
     path: fullUrl(req),
   })
-})
+}
 
-/* Public Channel */
-router.get(/^\/([a-z0-9-]+)$/, (req, res) => {
+router.get(/^\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey)
+router.get(/^\/user\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey) /* Legacy */
+
+/* Open Public Channel in Status */
+const handlePublicChannel = (req, res) => {
   const chatName = req.params[0]
   genPage(res, {
     title: `Join #${chatName} in Status`,
@@ -98,14 +92,13 @@ router.get(/^\/([a-z0-9-]+)$/, (req, res) => {
     copyTarget: chatName, 
     path: fullUrl(req),
   })
-})
+}
 
-/* Legacy Public Channel */
-router.get('/chat/public/:chatId', (req, res) => {
-  res.redirect(`/${req.params.chatId}`)
-})
+router.get(/^\/([a-z0-9-]+)$/, handlePublicChannel)
+router.get(/^\/chat\/public\/([a-z0-9-]+)$/, handlePublicChannel)
 
-router.get('/',  (req, res, next) => {
+/* Catchall for everything else */
+router.get('*',  (req, res, next) => {
   if (req.query.redirect) {
     return next()
   }
