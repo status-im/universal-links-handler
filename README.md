@@ -38,18 +38,13 @@ docker-compose -p whatever -f docker-compose.yml build
 
 It will build the image and start the container listening on port `8080`
 
-## Running the tests
+## Testing
 
-To run the tests, first start the container, either in `production` or `development` mode.
+```bash
+yarn run tests
+```
 
-Then you can run `bash tests/run.sh -u localhost:8080` or to run against against the live server
-`bash tests/run.sh -u http://join.status.im`
-
-Uses the awesome `https://github.com/robwhitby/shakedown`
-
-The pipeline is at:
-
-`https://jenkins.status.im/job/misc/job/universal-links-handler/`
+CI: https://jenkins.status.im/job/misc/job/universal-links-handler/
 
 ## Deployment
 
