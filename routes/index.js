@@ -113,6 +113,8 @@ router.get('/browse/:url(*)', handleSite) /* Legacy */
 
 router.get(/^\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey)
 router.get(/^\/user\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey) /* Legacy */
+router.get(/^\/(0[xX]04[0-9a-fA-F]{1,127})$/, handleError('Incorrect length of chat key'))
+router.get(/^\/(0[xX]04[0-9a-fA-F]{129,})$/, handleError('Incorrect length of chat key'))
 
 router.get(/^\/@.*[A-Z]+.*$/, handleError('Upper case ENS names are invalid'))
 router.get(/^\/@(.+)$/, handleEnsName)
