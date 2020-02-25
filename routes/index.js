@@ -26,6 +26,14 @@ const fullUrl = (req, path) => (
   `${req.protocol}://${req.hostname}${path ? path : req.originalUrl}`
 )
 
+/* Helper for returning syntax errors */
+const handleError = (msg) => (
+  (req, res, next) => {
+    res.status(400)
+    res.render('index', { error: new Error(msg) })
+  }
+)
+
 /* Open Website/Dapp in Status */
 const handleSite = (req, res) => {
   let { url } = req.params
@@ -41,14 +49,21 @@ const handleSite = (req, res) => {
 
 /* Open User Profile from Chat Key in Status */
 const handleChatKey = (req, res) => {
-  const chatKey = req.params[0]
-  chatName = StatusIm.chatKeyToChatName(chatKey)
+  /* We accept upper case for chat keys */
+  const chatKey = req.params[0].toLowerCase()
+  try {
+    chatName = StatusIm.chatKeyToChatName(chatKey)
+  } catch(error) {
+    console.error(`Failed to parse: "${req.params[0]}", Error:`, error.message)
+    res.render('index', { title: 'Invalid chat key format!', error })
+    return
+  }
   genPage(res, {
     title: `Join ${chatName} in Status`,
     info: `Chat and transact with <span>${chatKey}</span> in Status.`,
     copyTarget: chatKey,
     headerName: chatName,
-    path: fullUrl(req),
+    path: fullUrl(req, `/${chatKey}`),
   })
 }
 
@@ -59,7 +74,7 @@ const handleEnsName = (req, res) => {
     username = utils.normalizeEns(req.params[0])
   } catch(error) { /* ENS names have the widest regex: .+ */
     console.error(`Failed to parse: "${req.params[0]}", Error:`, error.message)
-    res.render('index', { title: 'Invalid Username Format!', error })
+    res.render('index', { title: 'Invalid username format!', error })
     return
   }
   genPage(res, {
@@ -99,11 +114,13 @@ router.get('/browse/:url(*)', handleSite) /* Legacy */
 router.get(/^\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey)
 router.get(/^\/user\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey) /* Legacy */
 
+router.get(/^\/@.*[A-Z]+.*$/, handleError('Upper case ENS names are invalid'))
 router.get(/^\/@(.+)$/, handleEnsName)
 router.get(/^\/user\/(.+)$/, handleEnsName) /* Legacy */
 
 router.get(/^\/([a-z0-9-]+)$/, handlePublicChannel)
-router.get(/^\/chat\/public\/([a-z0-9-]+)$/, handlePublicChannel)
+router.get(/^\/chat\/public\/([a-z0-9-]+)$/, handlePublicChannel) /* Legacy */
+router.get(/^\/([a-zA-Z0-9-]+)$/, handleError('Upper case channel names are invalid'))
 
 /* Catchall for everything else */
 router.get('*',  (req, res, next) => {
