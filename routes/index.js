@@ -9,21 +9,23 @@ var utils = require('../utils')
 var router = express.Router()
 
 /* Helper for generating pages */
-const genPage = (res, options) => {
+const genPage = (req, res, options) => {
   let opts = {
     ...options,
     buttonTitle: 'Open in Status',
-    buttonUrl: options.path,
+    buttonUrl: genUrl(req, options.path),
   }
-  utils.makeQrCodeDataUri(options.path).then(
+  utils.makeQrCodeDataUri(opts.buttonUrl).then(
     qrUri => res.render('index', { ...opts, qrUri }),
     error => res.render('index', opts)
   )
 }
 
 /* Helper for full URLs, can specify optional path */
-const fullUrl = (req, path) => (
-  `${req.protocol}://${req.hostname}${path ? path : req.originalUrl}`
+const genUrl = (req, path) => (
+  /* Make button open user profile if on Android */
+  utils.isAndroid(req) ? `status-im:/${path}` :
+    `${req.protocol}://${req.hostname}${path}`
 )
 
 /* Helper for returning syntax errors */
@@ -38,12 +40,12 @@ const handleError = (msg) => (
 const handleSite = (req, res) => {
   let { url } = req.params
   url = url.replace(/https?:\/\//, '')
-  genPage(res, {
+  genPage(req, res, {
     title: `Browse to ${url} in Status`,
     info: `Browse to ${url} in Status`,
     copyTarget: url,
     headerName: `<a href="https://${url}">${url}</a>`,
-    path: fullUrl(req, `/b/${url}`),
+    path: `/b/${url}`
   })
 }
 
@@ -58,12 +60,12 @@ const handleChatKey = (req, res) => {
     res.render('index', { title: 'Invalid chat key format!', error })
     return
   }
-  genPage(res, {
+  genPage(req, res, {
     title: `Join ${chatName} in Status`,
     info: `Chat and transact with <span>${chatKey}</span> in Status.`,
     copyTarget: chatKey,
     headerName: chatName,
-    path: fullUrl(req, `/${chatKey}`),
+    path: `/${chatKey}`,
   })
 }
 
@@ -77,24 +79,24 @@ const handleEnsName = (req, res) => {
     res.render('index', { title: 'Invalid username format!', error })
     return
   }
-  genPage(res, {
+  genPage(req, res, {
     title: `Join @${username} in Status`,
     info: `Chat and transact with <span>@${username}</span> in Status.`,
     copyTarget: username,
     headerName: `@${utils.showSpecialChars(username)}`,
-    path: fullUrl(req, `/@${username}`),
+    path: `/@${username}`,
   })
 }
 
 /* Open Public Channel in Status */
 const handlePublicChannel = (req, res) => {
   const chatName = req.params[0]
-  genPage(res, {
+  genPage(req, res, {
     title: `Join #${chatName} in Status`,
     info: `Join public channel <span>#${chatName}</span> on Status.`,
     headerName: `#${chatName}`,
     copyTarget: chatName, 
-    path: fullUrl(req),
+    path: req.originalUrl,
   })
 }
 
@@ -133,11 +135,10 @@ router.get('*',  (req, res, next) => {
   res.header('Expires', '-1')
   res.header('Pragma', 'no-cache')
 
-  let userAgent = req.headers['user-agent']
   let redirect = links.getStatus
-  if (utils.isAndroid(userAgent)) {
+  if (utils.isAndroid(req)) {
     redirect = links.playStore
-  } else if (utils.isIOS(userAgent)) {
+  } else if (utils.isIOS(req)) {
     redirect = links.appleStore
   }
 

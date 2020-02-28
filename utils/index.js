@@ -2,12 +2,12 @@ const QRCode = require('qrcode')
 const uts46 = require('idna-uts46-hx')
 const univeil = require('univeil')
 
-const isAndroid = (userAgent) => (
-  userAgent.toLowerCase().indexOf("android") > -1
+const isAndroid = (req) => (
+  req.headers['user-agent'].toLowerCase().indexOf("android") > -1
 )
 
-const isIOS = (userAgent) => (
-  userAgent.toLowerCase().indexOf("iphone") > -1
+const isIOS = (req) => (
+  req.headers['user-agent'].toLowerCase().indexOf("iphone") > -1
 )
 
 const makeQrCodeDataUri = (x) => (
