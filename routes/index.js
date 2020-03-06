@@ -84,7 +84,7 @@ const handleEnsName = (req, res) => {
     info: `Chat and transact with <span>@${username}</span> in Status.`,
     copyTarget: username,
     headerName: `@${utils.showSpecialChars(username)}`,
-    path: `/@${username}`,
+    path: req.originalUrl,
   })
 }
 
