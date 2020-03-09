@@ -79,8 +79,8 @@ test('test public channel routes', t => {
 
   t.test('/staTus-TesT - UPPER CASE', async t => { /* we don't allow uppercase */
     const res = await get('/staTus-TesT')
-    t.equal(res.statusCode, 400, 'returns 400')
-    t.ok(res.text.includes('Upper case channel names are invalid'), 'contains error')
+    t.equal(res.statusCode, 302, 'returns 302')
+    t.ok(res.headers['location'], '/status-test', 'redirects to lowercase')
   })
 })
 
