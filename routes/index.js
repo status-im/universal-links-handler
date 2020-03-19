@@ -10,14 +10,10 @@ var router = express.Router()
 
 /* Helper for generating pages */
 const genPage = (req, res, options) => {
-  let opts = {
-    ...options,
-    buttonTitle: 'Open in Status',
-    buttonUrl: genUrl(req, options.path),
-  }
-  utils.makeQrCodeDataUri(opts.buttonUrl).then(
-    qrUri => res.render('index', { ...opts, qrUri }),
-    error => res.render('index', opts)
+  let qrUrl = genUrl(req, options.path)
+  utils.makeQrCodeDataUri(qrUrl).then(
+    qrUri => res.render('index', { ...options, qrUri }),
+    error => res.render('index', options)
   )
 }
 
@@ -43,7 +39,7 @@ const handleSite = (req, res) => {
   genPage(req, res, {
     title: `Browse to ${url} in Status`,
     info: `Browse to ${url} in Status`,
-    copyTarget: url,
+    mainTarget: url,
     headerName: `<a href="https://${url}">${url}</a>`,
     path: `/b/${url}`
   })
@@ -63,7 +59,7 @@ const handleChatKey = (req, res) => {
   genPage(req, res, {
     title: `Join ${chatName} in Status`,
     info: `Chat and transact with <span>${chatKey}</span> in Status.`,
-    copyTarget: chatKey,
+    mainTarget: chatKey,
     headerName: chatName,
     path: `/${chatKey}`,
   })
@@ -82,7 +78,7 @@ const handleEnsName = (req, res) => {
   genPage(req, res, {
     title: `Join @${username} in Status`,
     info: `Chat and transact with <span>@${username}</span> in Status.`,
-    copyTarget: username,
+    mainTarget: username,
     headerName: `@${utils.showSpecialChars(username)}`,
     path: req.originalUrl,
   })
@@ -94,8 +90,8 @@ const handlePublicChannel = (req, res) => {
   genPage(req, res, {
     title: `Join #${chatName} in Status`,
     info: `Join public channel <span>#${chatName}</span> on Status.`,
+    mainTarget: chatName, 
     headerName: `#${chatName}`,
-    copyTarget: chatName, 
     path: req.originalUrl,
   })
 }

@@ -9,6 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <% if (locals.path) { %>
+    <meta property="status-im:target" content="<%= mainTarget %>" />
+
     <meta property="al:ios:url" content="status-im:/<%= path %>" />
     <meta property="al:ios:app_store_id" content="1178893006" />
     <meta property="al:ios:app_name" content="Status — Ethereum. Anywhere" />

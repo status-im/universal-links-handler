@@ -2,21 +2,17 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <h3 class="break-word"><%- headerName %></h3>
+        <h3 id="header" class="break-word"><%- headerName %></h3>
         <%if (locals.qrUri) { %>
           <img class="qr-code" src="<%= qrUri %>" />
         <% } %>
         <div class="row">
           <div class="col-md-6 ml-auto mr-auto text-center">
             <div class="copy">
-              <div class="inner" id="copy-target"><%= copyTarget %></div>
+              <div class="inner" id="copy-target"><%= mainTarget %></div>
               <a href="#" data-clipboard-target="#copy-target">Copy</a>
             </div>
-            <%if (locals.buttonUrl) { %>
-            <a href="<%= buttonUrl %>" class="btn btn-purple-fill"><%= buttonTitle %></a>
-            <% } else { %>
-            <a href="https://status.im/get/" class="btn btn-purple-fill">Download Status</a>
-            <% } %>
+            <button href="status-im:/<%= path %>" onclick="return redirectToAppOrStore();" class="btn btn-purple-fill">Open in Status</button>
             <div class="info">
               <%- info %>
             </div>
