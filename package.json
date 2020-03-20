@@ -21,6 +21,7 @@
     "univeil": "^0.1.14"
   },
   "devDependencies": {
+    "cheerio": "^1.0.0-rc.3",
     "esm": "^3.2.25",
     "nodemon": "^1.17.5",
     "supertest": "^4.0.2",
