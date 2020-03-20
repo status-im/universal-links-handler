@@ -113,10 +113,6 @@ $(document).ready(function ($) {
     retrieveAdvocacyPrograms();
   }
 
-  $('.sidebar').stick_in_parent({
-    offset_top: 30
-  });
-
   if ($('input[name="userSearch"]').length) {
     window.addEventListener('click', function (e) {
       if (document.getElementById('search-form').contains(e.target)) {
@@ -308,9 +304,6 @@ $(document).ready(function ($) {
       var id = $(this).attr('id');
       var title = $(this).text();
       $('.right-sub-navigation ul').append('<li class="li-' + $(this)[0].nodeName.toLowerCase() + '"><a href="#' + id + '">' + title + '</a></li>');
-    });
-    $('.right-sub-navigation').stick_in_parent({
-      offset_top: 30
     });
     $('.right-sub-navigation a').on('click', function () {
       var id = $(this).attr('href');
