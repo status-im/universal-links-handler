@@ -15,11 +15,14 @@ app.set('view engine', 'ejs');
 // accept the X-Forwarded-* headers
 app.set('trust proxy', true)
 
-app.use(morgan('tiny'))
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+if (process.env.NODE_ENV == 'development') {
+  app.use(morgan('tiny'))
+}
 
 app.use('/', indexRouter);
 
