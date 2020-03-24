@@ -120,6 +120,7 @@ router.get(/^\/user\/(.+)$/, handleEnsName) /* Legacy */
 
 router.get(/^\/([a-z0-9-]+)$/, handlePublicChannel)
 router.get(/^\/chat\/public\/([a-z0-9-]+)$/, handlePublicChannel) /* Legacy */
+router.get(/^\/chat\/public\/([a-zA-Z0-9-]+)$/, (req, res) => res.redirect(req.originalUrl.toLowerCase()))
 router.get(/^\/([a-zA-Z0-9-]+)$/, (req, res) => res.redirect(req.originalUrl.toLowerCase()))
 
 /* Catchall for everything else */
