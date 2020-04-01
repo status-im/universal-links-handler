@@ -33,48 +33,48 @@ test('test browser routes', t => {
 })
 
 test('test user ens routes', t => {
-  t.test('/@jakubgs.eth - VALID', async t => {
-    const res = await get('/@jakubgs.eth')
+  t.test('/u/jakubgs.eth - VALID', async t => {
+    const res = await get('/u/jakubgs.eth')
     t.eq(res.statusCode, 200, 'returns 200')
-    t.eq(meta(res, 'al:ios:url'), 'status-im://@jakubgs.eth', 'contains ios url')
-    t.eq(meta(res, 'al:android:url'), 'status-im://@jakubgs.eth', 'contains android url')
+    t.eq(meta(res, 'al:ios:url'), 'status-im://u/jakubgs.eth', 'contains ios url')
+    t.eq(meta(res, 'al:android:url'), 'status-im://u/jakubgs.eth', 'contains android url')
     t.eq(html(res, 'div.info'), 'Chat and transact with <span>@jakubgs.eth</span> in Status.', 'contains prompt')
   })
 
-  t.test('/@jAkuBgs.eth.eth - UPPER CASE', async t => { /* we don't allow uppercase */
-    const res = await get('/@jAkuBgs.eth')
+  t.test('/u/jAkuBgs.eth.eth - UPPER CASE', async t => { /* we don't allow uppercase */
+    const res = await get('/u/jAkuBgs.eth')
     t.eq(res.statusCode, 400, 'returns 400')
     t.eq(html(res, 'code#error'), 'Upper case ENS names are invalid', 'contains error')
   })
 })
 
 test('test chat key routes', t => {
-  t.test(`/0x04${chatKey.substr(0,8)}... - VALID`, async t => {
-    const res = await get(`/0x04${chatKey}`)
+  t.test(`/u/0x04${chatKey.substr(0,8)}... - VALID`, async t => {
+    const res = await get(`/u/0x04${chatKey}`)
     t.eq(res.statusCode, 200, 'returns 200')
-    t.eq(meta(res, 'al:ios:url'), `status-im://0x04${chatKey}`, 'contains ios url')
-    t.eq(meta(res, 'al:android:url'), `status-im://0x04${chatKey}`, 'contains android url')
+    t.eq(meta(res, 'al:ios:url'), `status-im://u/0x04${chatKey}`, 'contains ios url')
+    t.eq(meta(res, 'al:android:url'), `status-im://u/0x04${chatKey}`, 'contains android url')
     t.eq(html(res, 'div.info'), `Chat and transact with <span>0x04${chatKey}</span> in Status.`, 'contains prompt')
     t.eq(html(res, '#header'), chatName, 'contains chat name')
   })
 
-  t.test(`/0x04${chatKey.substr(0,8).toUpperCase()}... - LOWER CASE`, async t => { /* convert upper to lowe case */
-    const res = await get(`/0x04${chatKey.toUpperCase()}`)
+  t.test(`/u/0x04${chatKey.substr(0,8).toUpperCase()}... - LOWER CASE`, async t => { /* convert upper to lowe case */
+    const res = await get(`/u/0x04${chatKey.toUpperCase()}`)
     t.eq(res.statusCode, 200, 'returns 200')
-    t.eq(meta(res, 'al:ios:url'), `status-im://0x04${chatKey}`, 'contains ios url')
-    t.eq(meta(res, 'al:android:url'), `status-im://0x04${chatKey}`, 'contains android url')
+    t.eq(meta(res, 'al:ios:url'), `status-im://u/0x04${chatKey}`, 'contains ios url')
+    t.eq(meta(res, 'al:android:url'), `status-im://u/0x04${chatKey}`, 'contains android url')
     t.eq(html(res, 'div.info'), `Chat and transact with <span>0x04${chatKey}</span> in Status.`, 'contains prompt')
     t.eq(html(res, '#header'), chatName, 'contains chat name')
   })
 
-  t.test(`/0x04${chatKey.substr(0,8)}...abc - TOO LONG`, async t => { /* error on too long chat key */
-    const res = await get(`/0x04${chatKey}abc`)
+  t.test(`/u/0x04${chatKey.substr(0,8)}...abc - TOO LONG`, async t => { /* error on too long chat key */
+    const res = await get(`/u/0x04${chatKey}abc`)
     t.eq(res.statusCode, 400, 'returns 400')
     t.eq(html(res, 'code#error'), 'Incorrect length of chat key', 'contains error')
   })
 
-  t.test(`/0x04${chatKey.substr(0,8)}... - TOO SHORT`, async t => { /* error on too short chat key */
-    const res = await get(`/0x04${chatKey.substr(0,127)}`)
+  t.test(`/u/0x04${chatKey.substr(0,8)}... - TOO SHORT`, async t => { /* error on too short chat key */
+    const res = await get(`/u/0x04${chatKey.substr(0,127)}`)
     t.eq(res.statusCode, 400, 'returns 400')
     t.eq(html(res, 'code#error'), 'Incorrect length of chat key', 'contains error')
   })
