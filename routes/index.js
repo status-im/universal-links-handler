@@ -61,7 +61,7 @@ const handleChatKey = (req, res) => {
     info: `Chat and transact with <span>${chatKey}</span> in Status.`,
     mainTarget: chatKey,
     headerName: chatName,
-    path: `/${chatKey}`,
+    path: `/u/${chatKey}`,
   })
 }
 
@@ -109,13 +109,13 @@ router.get('/health', (req, res) => res.send('OK'))
 router.get('/b/:url(*)', handleSite)      
 router.get('/browse/:url(*)', handleSite) /* Legacy */
 
-router.get(/^\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey)
+router.get(/^\/u\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey)
+router.get(/^\/u\/(0[xX]04[0-9a-fA-F]{1,127})$/, handleError('Incorrect length of chat key'))
+router.get(/^\/u\/(0[xX]04[0-9a-fA-F]{129,})$/, handleError('Incorrect length of chat key'))
 router.get(/^\/user\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey) /* Legacy */
-router.get(/^\/(0[xX]04[0-9a-fA-F]{1,127})$/, handleError('Incorrect length of chat key'))
-router.get(/^\/(0[xX]04[0-9a-fA-F]{129,})$/, handleError('Incorrect length of chat key'))
 
-router.get(/^\/@.*[A-Z]+.*$/, handleError('Upper case ENS names are invalid'))
-router.get(/^\/@(.+)$/, handleEnsName)
+router.get(/^\/u\/.*[A-Z]+.*$/, handleError('Upper case ENS names are invalid'))
+router.get(/^\/u\/(.+)$/, handleEnsName)
 router.get(/^\/user\/(.+)$/, handleEnsName) /* Legacy */
 
 router.get(/^\/([a-z0-9-]+)$/, handlePublicChannel)
