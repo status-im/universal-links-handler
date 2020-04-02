@@ -12,7 +12,7 @@
               <div class="inner" id="copy-target"><%= mainTarget %></div>
               <a href="#" data-clipboard-target="#copy-target">Copy</a>
             </div>
-            <button href="status-im:/<%= path %>" onclick="return redirectToAppOrStore();" class="btn btn-purple-fill">Open in Status</button>
+            <a href="status-im:/<%= path %>" id="open" onclick="return redirectToAppOrStore();" class="btn btn-purple-fill">Open in Status</a>
             <div class="info">
               <%- info %>
             </div>
