@@ -32,6 +32,17 @@ const handleError = (msg) => (
   }
 )
 
+/* Helper for redirecting to upper case URLs */
+const handleRedirect = (req, res, next) => (
+  res.render('index', {
+    title: 'Redirecting form upper case',
+    redirect: {
+      name: req.params[0].toLowerCase(),
+      path: req.originalUrl.toLowerCase(),
+    },
+  })
+)
+
 /* Open Website/Dapp in Status */
 const handleSite = (req, res) => {
   let { url } = req.params
@@ -114,13 +125,14 @@ router.get(/^\/u\/(0[xX]04[0-9a-fA-F]{1,127})$/, handleError('Incorrect length o
 router.get(/^\/u\/(0[xX]04[0-9a-fA-F]{129,})$/, handleError('Incorrect length of chat key'))
 router.get(/^\/user\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey) /* Legacy */
 
-router.get(/^\/u\/.*[A-Z]+.*$/, handleError('Upper case ENS names are invalid'))
+router.get(/^\/u\/(.*[A-Z]+.*)$/, handleRedirect)
 router.get(/^\/u\/(.+)$/, handleEnsName)
 router.get(/^\/user\/(.+)$/, handleEnsName) /* Legacy */
 
 router.get(/^\/([a-z0-9-]+)$/, handlePublicChannel)
+router.get(/^\/([a-zA-Z0-9-]+)$/, handleRedirect)
 router.get(/^\/chat\/public\/([a-z0-9-]+)$/, handlePublicChannel) /* Legacy */
-router.get(/^\/chat\/public\/([a-zA-Z0-9-]+)$/, (req, res) => res.redirect(req.originalUrl.toLowerCase()))
+router.get(/^\/chat\/public\/([a-zA-Z0-9-]+)$/, handleRedirect)
 router.get(/^\/([a-zA-Z0-9-]+)$/, (req, res) => res.redirect(req.originalUrl.toLowerCase()))
 
 /* Catchall for everything else */

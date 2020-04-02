@@ -166,6 +166,8 @@
     </header>
     <%if (locals.error) { %>
     <%- include('fail') %>
+    <% } else if (locals.redirect) { %>
+    <%- include('redirect') %>
     <% } else { %>
     <%- include('join') %>
     <% } %>

@@ -18,7 +18,7 @@ const get = (path) => (
 
 /* helpers for querying returned HTML */
 const q = (res, query) => cheerio.load(res.text)(query)
-const html = (res, query) => cheerio.load(res.text)(query).html().trim()
+const html = (res, query) => (cheerio.load(res.text)(query).html() || "").trim()
 const meta = (res, name) => q(res, `meta[property="${name}"]`).attr('content')
 
 test('test browser routes', t => {
@@ -41,10 +41,12 @@ test('test user ens routes', t => {
     t.eq(html(res, 'div.info'), 'Chat and transact with <span>@jakubgs.eth</span> in Status.', 'contains prompt')
   })
 
-  t.test('/u/jAkuBgs.eth.eth - UPPER CASE', async t => { /* we don't allow uppercase */
+  t.test('/u/jAkuBgs.eth - UPPER CASE', async t => { /* we don't allow uppercase */
     const res = await get('/u/jAkuBgs.eth')
-    t.eq(res.statusCode, 400, 'returns 400')
-    t.eq(html(res, 'code#error'), 'Upper case ENS names are invalid', 'contains error')
+    t.eq(res.statusCode, 200, 'returns 200')
+    t.eq(q(res, 'a#redirect').attr('href'), '/u/jakubgs.eth', 'lower case url')
+    t.eq(html(res, 'a#redirect'), 'Redirect Me', 'redirect button')
+    t.eq(html(res, 'div.info'), 'Beware of phishing attacks.', 'contains warning')
   })
 })
 
@@ -91,8 +93,10 @@ test('test public channel routes', t => {
 
   t.test('/staTus-TesT - UPPER CASE', async t => { /* we don't allow uppercase */
     const res = await get('/staTus-TesT')
-    t.eq(res.statusCode, 302, 'returns 302')
-    t.eq(res.headers['location'], '/status-test', 'redirects to lowercase')
+    t.eq(res.statusCode, 200, 'returns 200')
+    t.eq(q(res, 'a#redirect').attr('href'), '/status-test', 'lower case url')
+    t.eq(html(res, 'a#redirect'), 'Redirect Me', 'redirect button')
+    t.eq(html(res, 'div.info'), 'Beware of phishing attacks.', 'contains warning')
   })
 })
 
