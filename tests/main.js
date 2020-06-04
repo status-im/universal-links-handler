@@ -30,6 +30,20 @@ test('test browser routes', t => {
     t.eq(meta(res, 'al:android:url'), 'status-im://b/ens.domains', 'contains android url')
     t.eq(html(res, 'div.info'), 'Browse to ens.domains in Status', 'contains prompt')
   })
+
+  t.test('/b/<script>fail;</script> - XSS', async t => {
+    const res = await get('/b/<script>fail;</script>')
+    t.eq(res.statusCode, 400, 'returns 400')
+    t.eq(html(res, 'h3#header'), 'Invalid input format', 'contains warning')
+    t.eq(html(res, 'code#error'), 'Input contains HTML: &lt;script&gt;fail;&lt;/script&gt;', 'contains error')
+  })
+
+  t.test('/b/google.com/<script>fail;</script> - XSS', async t => {
+    const res = await get('/b/google.com/<script>fail;</script>')
+    t.eq(res.statusCode, 400, 'returns 400')
+    t.eq(html(res, 'h3#header'), 'Invalid input format', 'contains warning')
+    t.eq(html(res, 'code#error'), 'Input contains HTML: google.com/&lt;script&gt;fail;&lt;/script&gt;', 'contains error')
+  })
 })
 
 test('test user ens routes', t => {
@@ -47,6 +61,13 @@ test('test user ens routes', t => {
     t.eq(q(res, 'a#redirect').attr('href'), '/u/jakubgs.eth', 'lower case url')
     t.eq(html(res, 'a#redirect'), 'Redirect Me', 'redirect button')
     t.eq(html(res, 'div.info'), 'Beware of phishing attacks.', 'contains warning')
+  })
+
+  t.test('/u/<body%20onload=alert(1)//> - XSS', async t => { /* we don't allow uppercase */
+    const res = await get('/u/<body%20onload=alert(1)//>')
+    t.eq(res.statusCode, 400, 'returns 400')
+    t.eq(html(res, 'h3#header'), 'Invalid input format', 'contains warning')
+    t.eq(html(res, 'code#error'), 'Input contains HTML: /u/%3Cbody%20onload=alert(1)//%3E', 'contains error')
   })
 })
 

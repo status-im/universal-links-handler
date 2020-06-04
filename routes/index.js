@@ -1,15 +1,20 @@
-var path = require('path');
-var express = require('express')
-var StatusIm = require('js-status-chat-name')
-var links = require('../resources/links.json')
-var assetLinks = require('../resources/assetlinks.json')
-var appleSiteAssociation = require('../resources/apple-app-site-association.json')
-var utils = require('../utils')
+const path = require('path')
+const express = require('express')
+const StatusIm = require('js-status-chat-name')
+const links = require('../resources/links.json')
+const assetLinks = require('../resources/assetlinks.json')
+const appleSiteAssociation = require('../resources/apple-app-site-association.json')
+const utils = require('../utils')
 
-var router = express.Router()
+const router = express.Router()
 
 /* Helper for generating pages */
 const genPage = (req, res, options) => {
+  /* Protection against XSS attacks */
+  if (!utils.isValidUrl(options.mainTarget)) {
+    handleError(`Input contains HTML: ${options.mainTarget}`)(req, res)
+    return
+  }
   let qrUrl = genUrl(req, options.path)
   utils.makeQrCodeDataUri(qrUrl).then(
     qrUri => res.render('index', { ...options, qrUri }),
@@ -26,14 +31,19 @@ const genUrl = (req, path) => (
 
 /* Helper for returning syntax errors */
 const handleError = (msg) => (
-  (req, res, next) => {
+  (req, res) => {
     res.status(400)
     res.render('index', { error: new Error(msg) })
   }
 )
 
 /* Helper for redirecting to upper case URLs */
-const handleRedirect = (req, res, next) => (
+const handleRedirect = (req, res) => {
+  /* Protection against XSS attacks */
+  if (!utils.isValidUrl(req.originalUrl)) {
+    handleError(`Input contains HTML: ${req.originalUrl}`)(req, res)
+    return
+  }
   res.render('index', {
     title: 'Redirecting form upper case',
     redirect: {
@@ -41,7 +51,7 @@ const handleRedirect = (req, res, next) => (
       path: req.originalUrl.toLowerCase(),
     },
   })
-)
+}
 
 /* Open Website/Dapp in Status */
 const handleSite = (req, res) => {
@@ -125,9 +135,9 @@ router.get(/^\/u\/(0[xX]04[0-9a-fA-F]{1,127})$/, handleError('Incorrect length o
 router.get(/^\/u\/(0[xX]04[0-9a-fA-F]{129,})$/, handleError('Incorrect length of chat key'))
 router.get(/^\/user\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey) /* Legacy */
 
-router.get(/^\/u\/(.*[A-Z]+.*)$/, handleRedirect)
-router.get(/^\/u\/(.+)$/, handleEnsName)
-router.get(/^\/user\/(.+)$/, handleEnsName) /* Legacy */
+router.get(/^\/u\/([^><]*[A-Z]+[^><]*)$/, handleRedirect)
+router.get(/^\/u\/([^<>]+)$/, handleEnsName)
+router.get(/^\/user\/([^<>]+)$/, handleEnsName) /* Legacy */
 
 router.get(/^\/([a-z0-9-]+)$/, handlePublicChannel)
 router.get(/^\/([a-zA-Z0-9-]+)$/, handleRedirect)
