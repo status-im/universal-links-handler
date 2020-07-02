@@ -2,6 +2,9 @@ const QRCode = require('qrcode')
 const uts46 = require('idna-uts46-hx')
 const isHtml = require('is-html')
 const univeil = require('univeil')
+const { Buffer } = require('buffer')
+const multibase = require('multibase')
+const secp256k1 = require('secp256k1')
 
 const isAndroid = (req) => (
   req.headers['user-agent'].toLowerCase().indexOf("android") > -1
@@ -42,6 +45,23 @@ const normalizeEns = (name) => (
 
 const showSpecialChars = (str) => univeil(str)
 
+/* check for multiformat variant encoding of the
+ * multicodec secp256k1 key identifier e7 */
+const isMultiFormatSecp256k1 = (bytes) => (
+  Buffer.from([231, 1]).compare(bytes.slice(0, 2)) == 0
+)
+
+/* decodes base58btc encoding and decompresses a serialized secp256k1 */
+const decompressKey = (key) => {
+  let cBytes = multibase.decode(key)
+  if (isMultiFormatSecp256k1(cBytes)) {
+    cBytes = cBytes.slice(2)
+  }
+  let pubKey = secp256k1.publicKeyConvert(cBytes, compressed=false)
+  let multibaseHex = multibase.encode('base16', pubKey).toString()
+  return '0x' + multibaseHex.substr(1)
+}
+
 module.exports = {
   isAndroid,
   isIOS,
@@ -49,4 +69,5 @@ module.exports = {
   isValidUrl,
   normalizeEns,
   showSpecialChars,
+  decompressKey,
 }

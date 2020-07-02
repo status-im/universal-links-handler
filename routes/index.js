@@ -68,12 +68,18 @@ const handleSite = (req, res) => {
 
 /* Open User Profile from Chat Key in Status */
 const handleChatKey = (req, res) => {
-  /* We accept upper case for chat keys */
-  const chatKey = req.params[0].toLowerCase()
+  let chatKey = req.params[0]
+  let uncompressedKey = chatKey
+
   try {
-    chatName = StatusIm.chatKeyToChatName(chatKey)
+    if (!chatKey.startsWith('0x')) { /* decompress/deserialize key */
+      uncompressedKey = utils.decompressKey(chatKey)
+    } else { /* We accept upper case for hexadecimal public keys */
+      chatKey = chatKey.toLowerCase()
+    }
+    chatName = StatusIm.chatKeyToChatName(uncompressedKey)
   } catch(error) {
-    console.error(`Failed to parse: "${req.params[0]}", Error:`, error.message)
+    console.error(`Failed to parse: "${uncompressedKey}", Error:`, error.message)
     res.render('index', { title: 'Invalid chat key format!', error })
     return
   }
@@ -130,9 +136,14 @@ router.get('/health', (req, res) => res.send('OK'))
 router.get('/b/:url(*)', handleSite)      
 router.get('/browse/:url(*)', handleSite) /* Legacy */
 
+router.get(/^\/u\/(z[0-9a-zA-Z]{46,49})$/, handleChatKey)
+router.get(/^\/u\/(z[0-9a-zA-Z]+)$/, handleError('Incorrect length of chat key'))
+router.get(/^\/u\/(fe701[0-9a-fA-F]{66})$/, handleChatKey)
+router.get(/^\/u\/(fe701[0-9a-fA-F]+)$/, handleError('Incorrect length of chat key'))
+router.get(/^\/u\/(f[0-9a-fA-F]{66})$/, handleChatKey)
+router.get(/^\/u\/(f[0-9a-fA-F]+)$/, handleError('Incorrect length of chat key'))
 router.get(/^\/u\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey)
-router.get(/^\/u\/(0[xX]04[0-9a-fA-F]{1,127})$/, handleError('Incorrect length of chat key'))
-router.get(/^\/u\/(0[xX]04[0-9a-fA-F]{129,})$/, handleError('Incorrect length of chat key'))
+router.get(/^\/u\/(0[xX]04[0-9a-fA-F]+)$/, handleError('Incorrect length of chat key'))
 router.get(/^\/user\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey) /* Legacy */
 
 router.get(/^\/u\/([^><]*[A-Z]+[^><]*)$/, handleRedirect)

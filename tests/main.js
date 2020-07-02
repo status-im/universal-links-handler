@@ -8,6 +8,8 @@ import appleSiteAssociation from '../resources/apple-app-site-association.json'
 
 const host = 'join.status.im'
 const chatKey = 'e139115a1acc72510388fcf7e1cf492784c9a839888b25271465f4f1baa38c2d3997f8fd78828eb8628bc3bb55ababd884c6002d18330d59c404cc9ce3e4fb35'
+const multibaseKey = 'fe70103e139115a1acc72510388fcf7e1cf492784c9a839888b25271465f4f1baa38c2d'
+const compressedKey = 'zQ3shuoHL7WZEfKdexM6EyDRDhXBgcKz5SVw79stVMpmeyUvG'
 const chatName = 'Lavender Trivial Goral'
 
 const srv = request(app)
@@ -98,6 +100,40 @@ test('test chat key routes', t => {
 
   t.test(`/u/0x04${chatKey.substr(0,8)}... - TOO SHORT`, async t => { /* error on too short chat key */
     const res = await get(`/u/0x04${chatKey.substr(0,127)}`)
+    t.eq(res.statusCode, 400, 'returns 400')
+    t.eq(html(res, 'code#error'), 'Incorrect length of chat key', 'contains error')
+  })
+})
+
+test('test multibase chat key routes', t => {
+  t.test(`/u/${multibaseKey.substr(0,12)}... - VALID`, async t => {
+    const res = await get(`/u/${multibaseKey}`)
+    t.eq(res.statusCode, 200, 'returns 200')
+    t.eq(meta(res, 'al:ios:url'), `status-im://u/${multibaseKey}`, 'contains ios url')
+    t.eq(meta(res, 'al:android:url'), `status-im://u/${multibaseKey}`, 'contains android url')
+    t.eq(html(res, 'div.info'), `Chat and transact with <span>${multibaseKey}</span> in Status.`, 'contains prompt')
+    t.eq(html(res, '#header'), chatName, 'contains chat name')
+  })
+
+  t.test(`/u/${multibaseKey.substr(0,12)}... - TOO SHORT`, async t => { /* error on too short chat key */
+    const res = await get(`/u/${multibaseKey.substr(0,46)}`)
+    t.eq(res.statusCode, 400, 'returns 400')
+    t.eq(html(res, 'code#error'), 'Incorrect length of chat key', 'contains error')
+  })
+})
+
+test('test compressed chat key routes', t => {
+  t.test(`/u/${compressedKey.substr(0,12)}... - VALID`, async t => {
+    const res = await get(`/u/${compressedKey}`)
+    t.eq(res.statusCode, 200, 'returns 200')
+    t.eq(meta(res, 'al:ios:url'), `status-im://u/${compressedKey}`, 'contains ios url')
+    t.eq(meta(res, 'al:android:url'), `status-im://u/${compressedKey}`, 'contains android url')
+    t.eq(html(res, 'div.info'), `Chat and transact with <span>${compressedKey}</span> in Status.`, 'contains prompt')
+    t.eq(html(res, '#header'), chatName, 'contains chat name')
+  })
+
+  t.test(`/u/${compressedKey.substr(0,12)}... - TOO SHORT`, async t => { /* error on too short chat key */
+    const res = await get(`/u/${compressedKey.substr(0,46)}`)
     t.eq(res.statusCode, 400, 'returns 400')
     t.eq(html(res, 'code#error'), 'Incorrect length of chat key', 'contains error')
   })
