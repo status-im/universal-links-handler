@@ -40,16 +40,16 @@ const _getMetaProp = (prop) => $(`meta[property="${prop}"]`).attr("content")
 /* helper to detect Android/iOS user agent */
 const _userAgentHas = (str) => navigator.userAgent.toLowerCase().indexOf(str) > -1
 
+/* redirect to Referral Service for referral bonus */
+const getReferralUrl = (params) => {
+  /* TODO: change to 'get.status.im' */
+  return `https://test-referral.status.im/${params.invite}`
+}
+
 /* redirect to Play Store based on URL */
-const getPlayStoreUrl = () => {
-  let params = _getParams(window.location.href)
+const getPlayStoreUrl = (params) => {
   /* action for app to take after installation */
   let args = { out: _getMetaProp('status-im:target') }
-
-  /* if available set invite and cid arguments */
-  if (params.invite) { args.invite = params.invite }
-  if (params.cid) { args.cid = params.cid }
-
   return _buildPlayStoreUrl(_formatArgs(args))
 }
 
@@ -61,9 +61,13 @@ const redirectToStore = () => {
   /* to avoid showing store after app has been opened */
   if (siteLostFocus || isHidden()) { return }
 
+  let params = _getParams(window.location.href)
   var url
-  if (_userAgentHas('android')) {
-    url = getPlayStoreUrl()
+  /* if invite is set redirect tor referral service */
+  if (params.invite) {
+    url = getReferralUrl(params)
+  } else if (_userAgentHas('android')) {
+    url = getPlayStoreUrl(params)
   } else if (_userAgentHas('iphone')) {
     url = getAppStoreUrl()
   } else { /* there's no desktop status app */
