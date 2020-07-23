@@ -30,7 +30,7 @@ test('test browser routes', t => {
     t.eq(meta(res, 'status-im:target'), 'ens.domains', 'contains target')
     t.eq(meta(res, 'al:ios:url'), 'status-im://b/ens.domains', 'contains ios url')
     t.eq(meta(res, 'al:android:url'), 'status-im://b/ens.domains', 'contains android url')
-    t.eq(html(res, 'div.info'), 'Browse to ens.domains in Status', 'contains prompt')
+    t.eq(html(res, 'div#info'), 'Browse to ens.domains in Status', 'contains prompt')
   })
 
   t.test('/b/<script>fail;</script> - XSS', async t => {
@@ -54,7 +54,7 @@ test('test user ens routes', t => {
     t.eq(res.statusCode, 200, 'returns 200')
     t.eq(meta(res, 'al:ios:url'), 'status-im://u/jakubgs.eth', 'contains ios url')
     t.eq(meta(res, 'al:android:url'), 'status-im://u/jakubgs.eth', 'contains android url')
-    t.eq(html(res, 'div.info'), 'Chat and transact with <span>@jakubgs.eth</span> in Status.', 'contains prompt')
+    t.eq(html(res, 'div#info'), 'Chat and transact with <span>@jakubgs.eth</span> in Status.', 'contains prompt')
   })
 
   t.test('/u/jAkuBgs.eth - UPPER CASE', async t => { /* we don't allow uppercase */
@@ -62,7 +62,7 @@ test('test user ens routes', t => {
     t.eq(res.statusCode, 200, 'returns 200')
     t.eq(q(res, 'a#redirect').attr('href'), '/u/jakubgs.eth', 'lower case url')
     t.eq(html(res, 'a#redirect'), 'Redirect Me', 'redirect button')
-    t.eq(html(res, 'div.info'), 'Beware of phishing attacks.', 'contains warning')
+    t.eq(html(res, 'div#info'), 'Beware of phishing attacks.', 'contains warning')
   })
 
   t.test('/u/<body%20onload=alert(1)//> - XSS', async t => { /* we don't allow uppercase */
@@ -79,7 +79,7 @@ test('test chat key routes', t => {
     t.eq(res.statusCode, 200, 'returns 200')
     t.eq(meta(res, 'al:ios:url'), `status-im://u/0x04${chatKey}`, 'contains ios url')
     t.eq(meta(res, 'al:android:url'), `status-im://u/0x04${chatKey}`, 'contains android url')
-    t.eq(html(res, 'div.info'), `Chat and transact with <span>0x04${chatKey}</span> in Status.`, 'contains prompt')
+    t.eq(html(res, 'div#info'), `Chat and transact with <span>0x04${chatKey}</span> in Status.`, 'contains prompt')
     t.eq(html(res, '#header'), chatName, 'contains chat name')
   })
 
@@ -88,7 +88,7 @@ test('test chat key routes', t => {
     t.eq(res.statusCode, 200, 'returns 200')
     t.eq(meta(res, 'al:ios:url'), `status-im://u/0x04${chatKey}`, 'contains ios url')
     t.eq(meta(res, 'al:android:url'), `status-im://u/0x04${chatKey}`, 'contains android url')
-    t.eq(html(res, 'div.info'), `Chat and transact with <span>0x04${chatKey}</span> in Status.`, 'contains prompt')
+    t.eq(html(res, 'div#info'), `Chat and transact with <span>0x04${chatKey}</span> in Status.`, 'contains prompt')
     t.eq(html(res, '#header'), chatName, 'contains chat name')
   })
 
@@ -111,7 +111,7 @@ test('test multibase chat key routes', t => {
     t.eq(res.statusCode, 200, 'returns 200')
     t.eq(meta(res, 'al:ios:url'), `status-im://u/${multibaseKey}`, 'contains ios url')
     t.eq(meta(res, 'al:android:url'), `status-im://u/${multibaseKey}`, 'contains android url')
-    t.eq(html(res, 'div.info'), `Chat and transact with <span>${multibaseKey}</span> in Status.`, 'contains prompt')
+    t.eq(html(res, 'div#info'), `Chat and transact with <span>${multibaseKey}</span> in Status.`, 'contains prompt')
     t.eq(html(res, '#header'), chatName, 'contains chat name')
   })
 
@@ -128,7 +128,7 @@ test('test compressed chat key routes', t => {
     t.eq(res.statusCode, 200, 'returns 200')
     t.eq(meta(res, 'al:ios:url'), `status-im://u/${compressedKey}`, 'contains ios url')
     t.eq(meta(res, 'al:android:url'), `status-im://u/${compressedKey}`, 'contains android url')
-    t.eq(html(res, 'div.info'), `Chat and transact with <span>${compressedKey}</span> in Status.`, 'contains prompt')
+    t.eq(html(res, 'div#info'), `Chat and transact with <span>${compressedKey}</span> in Status.`, 'contains prompt')
     t.eq(html(res, '#header'), chatName, 'contains chat name')
   })
 
@@ -145,7 +145,7 @@ test('test public channel routes', t => {
     t.eq(res.statusCode, 200, 'returns 200')
     t.eq(meta(res, 'al:ios:url'), 'status-im://status-test', 'contains ios url')
     t.eq(meta(res, 'al:android:url'), 'status-im://status-test', 'contains android url')
-    t.eq(html(res, 'div.info'), 'Join public channel <span>#status-test</span> on Status.', 'contains prompt')
+    t.eq(html(res, 'div#info'), 'Join public channel <span>#status-test</span> on Status.', 'contains prompt')
   })
 
   t.test('/staTus-TesT - UPPER CASE', async t => { /* we don't allow uppercase */
@@ -153,7 +153,7 @@ test('test public channel routes', t => {
     t.eq(res.statusCode, 200, 'returns 200')
     t.eq(q(res, 'a#redirect').attr('href'), '/status-test', 'lower case url')
     t.eq(html(res, 'a#redirect'), 'Redirect Me', 'redirect button')
-    t.eq(html(res, 'div.info'), 'Beware of phishing attacks.', 'contains warning')
+    t.eq(html(res, 'div#info'), 'Beware of phishing attacks.', 'contains warning')
   })
 })
 

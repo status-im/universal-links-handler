@@ -1,24 +1,17 @@
-<section class="join-content p-b-160 p-t-160 text-center">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <h3 id="header" class="break-word"><%- headerName %></h3>
-        <%if (locals.qrUri) { %>
-          <img class="qr-code" src="<%= qrUri %>" />
-        <% } %>
-        <div class="row">
-          <div class="col-md-6 ml-auto mr-auto text-center">
-            <div class="copy">
-              <div class="inner" id="copy-target"><%= mainTarget %></div>
-              <a href="#" data-clipboard-target="#copy-target">Copy</a>
-            </div>
-            <a href="status-im:/<%= path %>" id="open" onclick="return redirectToAppOrStore();" class="btn btn-purple-fill">Open in Status</a>
-            <div class="info">
-              <%- info %>
-            </div>
-          </div>
-        </div>
-      </div>
+<!DOCTYPE html>
+<section class="py-24 xl:py-40">
+  <div class="max-w-xl mx-auto px-8 lg:px-12 align-center">
+    <h3 id="header" class="break-word text-center font-display text-5xl"><%- headerName %></h3>
+    <%if (locals.qrUri) { %>
+    <img class="border border-solid border-gray-100 rounded-sm mt-8" src="<%= qrUri %>" />
+    <% } %>
+    <div class="copy border border-solid border-gray-100 rounded-sm flex items-center justify-between p-6 my-4 h-20">
+      <div class="inner" id="copy-target"><%= mainTarget %></div>
+      <a href="#" data-clipboard-target="#copy-target" class="text-primary-base font-bold hover:text-primary-700">Copy</a>
+    </div>
+    <a href="status-im:/<%= path %>" id="open" onclick="return redirectToAppOrStore();" class="font-special font-semibold text-center transition-all duration-200 ease-linear text-white bg-primary-base hover:bg-primary-700 py-5 px-8 block w-full rounded">Open in Status</a>
+    <div id="info" class="text-gray-500 mt-4 text-center">
+      <%- info %>
     </div>
   </div>
 </section>
