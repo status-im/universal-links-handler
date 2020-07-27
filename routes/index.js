@@ -85,7 +85,7 @@ const handleChatKey = (req, res) => {
   }
   genPage(req, res, {
     title: `Join ${chatName} in Status`,
-    info: `Chat and transact with <span>${chatKey}</span> in Status.`,
+    info: `Chat and transact with <span class="inline-block align-bottom w-32 truncate">${chatKey}</span> in Status.`,
     mainTarget: chatKey,
     headerName: chatName,
     path: `/u/${chatKey}`,
@@ -104,7 +104,7 @@ const handleEnsName = (req, res) => {
   }
   genPage(req, res, {
     title: `Join @${username} in Status`,
-    info: `Chat and transact with <span>@${username}</span> in Status.`,
+    info: `Chat and transact with <span class="inline-block align-bottom w-32 truncate">@${username}</span> in Status.`,
     mainTarget: username,
     headerName: `@${utils.showSpecialChars(username)}`,
     path: req.originalUrl,
@@ -116,7 +116,7 @@ const handlePublicChannel = (req, res) => {
   const chatName = req.params[0]
   genPage(req, res, {
     title: `Join #${chatName} in Status`,
-    info: `Join public channel <span>#${chatName}</span> on Status.`,
+    info: `Join public channel <span class="inline-block align-bottom w-32 truncate">#${chatName}</span> on Status.`,
     mainTarget: chatName, 
     headerName: `#${chatName}`,
     path: req.originalUrl,
