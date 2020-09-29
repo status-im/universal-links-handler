@@ -18,12 +18,13 @@ const makeQrCodeDataUri = (x) => (
   QRCode.toDataURL(x, {width: 300})
 )
 
-const isValidUrl = (text) => {
+const isValidUrl = (text, useStd3ASCII=true) => {
   /* Remove protocol prefix */
   noPrefix = text.replace(/(^\w+:|^)\/\//, '');
   tokens = noPrefix.split('/')
   try {
-    uts46.toUnicode(tokens[0], {useStd3ASCII: true})
+    /* useStd3ASCII=true accepts only DNS domain complaint urls */
+    uts46.toUnicode(tokens[0], {useStd3ASCII})
   } catch(ex) {
     return false
   }
