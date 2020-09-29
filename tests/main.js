@@ -1,4 +1,5 @@
 import { test } from 'zora'
+import crypto from 'crypto'
 import cheerio from 'cheerio'
 import request from 'supertest'
 import app from '../app'
@@ -7,16 +8,8 @@ import assetLinks from '../resources/assetlinks.json'
 import appleSiteAssociation from '../resources/apple-app-site-association.json'
 
 const host = 'join.status.im'
-const chatKey = 'e139115a1acc72510388fcf7e1cf492784c9a839888b25271465f4f1baa38c2d3997f8fd78828eb8628bc3bb55ababd884c6002d18330d59c404cc9ce3e4fb35'
-const multibaseKey = 'fe70103e139115a1acc72510388fcf7e1cf492784c9a839888b25271465f4f1baa38c2d'
-const compressedKey = 'zQ3shuoHL7WZEfKdexM6EyDRDhXBgcKz5SVw79stVMpmeyUvG'
-const chatName = 'Lavender Trivial Goral'
-
 const srv = request(app)
-
-const get = (path) => (
-  srv.get(path).set('Host', host)
-)
+const get = (path) => srv.get(path).set('Host', host)
 
 /* helpers for querying returned HTML */
 const q = (res, query) => cheerio.load(res.text)(query)
@@ -74,6 +67,9 @@ test('test user ens routes', t => {
 })
 
 test('test chat key routes', t => {
+  const chatName = 'Lavender Trivial Goral'
+  const chatKey = 'e139115a1acc72510388fcf7e1cf492784c9a839888b25271465f4f1baa38c2d3997f8fd78828eb8628bc3bb55ababd884c6002d18330d59c404cc9ce3e4fb35'
+
   t.test(`/u/0x04${chatKey.substr(0,8)}... - VALID`, async t => {
     const res = await get(`/u/0x04${chatKey}`)
     t.eq(res.statusCode, 200, 'returns 200')
@@ -106,6 +102,9 @@ test('test chat key routes', t => {
 })
 
 test('test multibase chat key routes', t => {
+  const chatName = 'Lavender Trivial Goral'
+  const multibaseKey = 'fe70103e139115a1acc72510388fcf7e1cf492784c9a839888b25271465f4f1baa38c2d'
+
   t.test(`/u/${multibaseKey.substr(0,12)}... - VALID`, async t => {
     const res = await get(`/u/${multibaseKey}`)
     t.eq(res.statusCode, 200, 'returns 200')
@@ -123,6 +122,8 @@ test('test multibase chat key routes', t => {
 })
 
 test('test compressed chat key routes', t => {
+  const compressedKey = 'zQ3shuoHL7WZEfKdexM6EyDRDhXBgcKz5SVw79stVMpmeyUvG'
+
   t.test(`/u/${compressedKey.substr(0,12)}... - VALID`, async t => {
     const res = await get(`/u/${compressedKey}`)
     t.eq(res.statusCode, 200, 'returns 200')
@@ -145,7 +146,7 @@ test('test public channel routes', t => {
     t.eq(res.statusCode, 200, 'returns 200')
     t.eq(meta(res, 'al:ios:url'), 'status-im://status-test', 'contains ios url')
     t.eq(meta(res, 'al:android:url'), 'status-im://status-test', 'contains android url')
-    t.eq(html(res, 'div#info'), 'Join public channel <span class=\"inline-block align-bottom w-32 truncate\">#status-test</span> on Status.', 'contains prompt')
+    t.eq(html(res, 'div#info'), 'Join public channel <span class=\"inline-block align-bottom w-32 truncate\">#status-test</span> in Status.', 'contains prompt')
   })
 
   t.test('/staTus-TesT - UPPER CASE', async t => { /* we don't allow uppercase */
@@ -154,6 +155,42 @@ test('test public channel routes', t => {
     t.eq(q(res, 'a#redirect').attr('href'), '/status-test', 'lower case url')
     t.eq(html(res, 'a#redirect'), 'Redirect Me', 'redirect button')
     t.eq(html(res, 'div#info'), 'Beware of phishing attacks.', 'contains warning')
+  })
+})
+
+test('group chat routes', t => {
+  const groupName = 'Secret%20Club'
+  const groupUUID = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+  const adminKey = '0x' + crypto.randomBytes(65).toString('hex')
+  const groupKey =  groupUUID + '-0x' + crypto.randomBytes(65).toString('hex')
+
+  t.test('/g/args?a1=Secret%20Club&... - VALID', async t => {
+    const res = await get(`/g/args?a=${adminKey}&a1=${groupName}&a2=${groupKey}`)
+    t.eq(res.statusCode, 200, 'returns 200')
+    t.eq(meta(res, 'al:ios:url'), `status-im://g/args?a=${adminKey}&a1=${groupName}&a2=${groupKey}`, 'contains ios url')
+    t.eq(meta(res, 'al:android:url'), `status-im://g/args?a=${adminKey}&a1=${groupName}&a2=${groupKey}`, 'contains android url')
+    t.eq(html(res, 'div#info'), 'Join group chat <span class=\"inline-block align-bottom w-32 truncate\">Secret Club</span> in Status.', 'contains prompt')
+  })
+
+  t.test('/g/args?a1=Secret%20Club&.. - MISSING ARGS', async t => {
+    const res = await get(`/g/args?a=${adminKey}&a=${groupName}`)
+    t.eq(res.statusCode, 400, 'returns 400')
+    t.eq(html(res, 'h3#header'), 'Invalid input format', 'contains warning')
+    t.eq(html(res, 'code#error'), 'Invalid group chat URL: Missing arguments!', 'contains error')
+  })
+
+  t.test('/g/args?a1=Secret%20Club&.. - WRONG ADMIN KEY', async t => {
+    const res = await get(`/g/args?a=${adminKey.substr(0, 130)}&a1=${groupName}&a2=${groupKey}`)
+    t.eq(res.statusCode, 400, 'returns 400')
+    t.eq(html(res, 'h3#header'), 'Invalid input format', 'contains warning')
+    t.eq(html(res, 'code#error'), 'Invalid group chat URL: Admin public key invalid!', 'contains error')
+  })
+
+  t.test('/g/args?a1=Secret%20Club&.. - WRONG CHAT KEY', async t => {
+    const res = await get(`/g/args?a=${adminKey}&a1=${groupName}&a2=${groupKey.substr(0, 160)}`)
+    t.eq(res.statusCode, 400, 'returns 400')
+    t.eq(html(res, 'h3#header'), 'Invalid input format', 'contains warning')
+    t.eq(html(res, 'code#error'), 'Invalid group chat URL: Group public key invalid!', 'contains error')
   })
 })
 

@@ -11,7 +11,7 @@ const router = express.Router()
 /* Helper for generating pages */
 const genPage = (req, res, options) => {
   /* Protection against XSS attacks */
-  if (!utils.isValidUrl(options.mainTarget)) {
+  if (!utils.isValidUrl(options.mainTarget, useStd3ASCII=!options.whitespace)) {
     handleError(`Input contains HTML: ${options.mainTarget}`)(req, res)
     return
   }
@@ -77,7 +77,6 @@ const handleSite = (req, res) => {
 const handleChatKey = (req, res) => {
   let chatKey = req.params[0]
   let uncompressedKey = chatKey
-
   try {
     if (!chatKey.startsWith('0x')) { /* decompress/deserialize key */
       uncompressedKey = utils.decompressKey(chatKey)
@@ -123,9 +122,43 @@ const handlePublicChannel = (req, res) => {
   const chatName = req.params[0]
   genPage(req, res, {
     title: `Join #${chatName} in Status`,
-    info: `Join public channel <span class="inline-block align-bottom w-32 truncate">#${chatName}</span> on Status.`,
+    info: `Join public channel <span class="inline-block align-bottom w-32 truncate">#${chatName}</span> in Status.`,
     mainTarget: chatName, 
     headerName: `#${chatName}`,
+    path: req.originalUrl,
+  })
+}
+
+/* This verifies all 3 required URL arguments are present */
+const validateGroupChatArgs = (args) => {
+  const requiredKeys = ['a', 'a1', 'a2']
+  const argsHasKey = key => Object.keys(args).includes(key)
+  if (!requiredKeys.every(argsHasKey)) {
+    throw Error('Missing arguments!')
+  }
+  if (args.a == null || args.a.length != 132) {
+    throw Error('Admin public key invalid!')
+  }
+  if (args.a2 == null || args.a2.length != 169) {
+    throw Error('Group public key invalid!')
+  }
+}
+
+/* Open Group Chat in Status */
+const handleGroupChat = (req, res) => {
+  try {
+    validateGroupChatArgs(req.query)
+  } catch(ex) {
+    handleError(`Invalid group chat URL: ${ex.message}`)(req, res)
+    return
+  }
+  let groupName = req.query.a1
+  genPage(req, res, {
+    title: `Join "${groupName}" group chat in Status`,
+    info: `Join group chat <span class="inline-block align-bottom w-32 truncate">${groupName}</span> in Status.`,
+    whitespace: true, /* Allow whitespace in group names */
+    mainTarget: groupName, 
+    headerName: groupName,
     path: req.originalUrl,
   })
 }
@@ -162,6 +195,8 @@ router.get(/^\/([a-zA-Z0-9-]+)$/, handleRedirect)
 router.get(/^\/chat\/public\/([a-z0-9-]+)$/, handlePublicChannel) /* Legacy */
 router.get(/^\/chat\/public\/([a-zA-Z0-9-]+)$/, handleRedirect)
 router.get(/^\/([a-zA-Z0-9-]+)$/, (req, res) => res.redirect(req.originalUrl.toLowerCase()))
+
+router.get('/g/:group(*)', handleGroupChat)
 
 /* Catchall for everything else */
 router.get('*',  (req, res, next) => {
