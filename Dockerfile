@@ -10,5 +10,7 @@ WORKDIR /srv
 
 RUN yarn install
 
+ENV NODE_ENV=production
+
 CMD yarn run start
 EXPOSE 3000
