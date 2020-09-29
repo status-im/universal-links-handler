@@ -23,11 +23,18 @@ const genPage = (req, res, options) => {
 }
 
 /* Helper for full URLs, can specify optional path */
-const genUrl = (req, path) => (
+const genUrl = (req, path) => {
   /* Make button open user profile if on Android */
-  utils.isAndroid(req) ? `status-im:/${path}` :
-    `${req.protocol}://${req.hostname}${path}`
-)
+  if (utils.isAndroid(req)) {
+    return `status-im:/${path}`
+  }
+  /* QR code doesn't work if localhost is used */
+  if (process.env.NODE_ENV == 'development') {
+    return `https://join.status.im${path}`
+  }
+  /* Otherwise just use current server endpoint */
+  return `${req.protocol}://${req.hostname}${path}`
+}
 
 /* Helper for returning syntax errors */
 const handleError = (msg) => (
