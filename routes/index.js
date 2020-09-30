@@ -94,7 +94,7 @@ const handleChatKey = (req, res) => {
     info: `Chat and transact with <span class="inline-block align-bottom w-32 truncate">${chatKey}</span> in Status.`,
     mainTarget: chatKey,
     headerName: chatName,
-    path: `/u/${chatKey}`,
+    path: req.originalUrl,
   })
 }
 
