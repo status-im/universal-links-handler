@@ -79,13 +79,10 @@ test('test chat key routes', t => {
     t.eq(html(res, '#header'), chatName, 'contains chat name')
   })
 
-  t.test(`/u/0x04${chatKey.substr(0,8).toUpperCase()}... - LOWER CASE`, async t => { /* convert upper to lowe case */
+  t.test(`/u/0x04${chatKey.substr(0,8).toUpperCase()}... - UPPER CASE`, async t => { /* redirect to lower case */
     const res = await get(`/u/0x04${chatKey.toUpperCase()}`)
-    t.eq(res.statusCode, 200, 'returns 200')
-    t.eq(meta(res, 'al:ios:url'), `status-im://u/0x04${chatKey}`, 'contains ios url')
-    t.eq(meta(res, 'al:android:url'), `status-im://u/0x04${chatKey}`, 'contains android url')
-    t.eq(html(res, 'div#info'), `Chat and transact with <span class=\"inline-block align-bottom w-32 truncate\">0x04${chatKey}</span> in Status.`, 'contains prompt')
-    t.eq(html(res, '#header'), chatName, 'contains chat name')
+    t.eq(res.statusCode, 302, 'returns 302')
+    t.eq(res.headers.location, `/u/0x04${chatKey}`, 'sets location')
   })
 
   t.test(`/u/0x04${chatKey.substr(0,8)}...abc - TOO LONG`, async t => { /* error on too long chat key */
