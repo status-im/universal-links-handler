@@ -44,7 +44,11 @@ const handleError = (msg) => (
   }
 )
 
-/* Helper for redirecting to upper case URLs */
+/* Helper for redirecting to lower case URL */
+const quickRedirect = (req, res) =>
+  res.redirect(302, req.originalUrl.toLowerCase())
+
+/* Helper for showing a redirect page to lower case URL */
 const handleRedirect = (req, res) => {
   /* Protection against XSS attacks */
   if (!utils.isValidUrl(req.originalUrl)) {
@@ -178,13 +182,17 @@ router.get('/browse/:url(*)', handleSite) /* Legacy */
 
 router.get(/^\/u\/(z[0-9a-zA-Z]{46,49})$/, handleChatKey)
 router.get(/^\/u\/(z[0-9a-zA-Z]+)$/, handleError('Incorrect length of chat key'))
-router.get(/^\/u\/(fe701[0-9a-fA-F]{66})$/, handleChatKey)
+router.get(/^\/u\/(fe701[0-9a-f]{66})$/, handleChatKey)
+router.get(/^\/u\/(fe701[0-9a-fA-F]{66})$/, quickRedirect)
 router.get(/^\/u\/(fe701[0-9a-fA-F]+)$/, handleError('Incorrect length of chat key'))
-router.get(/^\/u\/(f[0-9a-fA-F]{66})$/, handleChatKey)
+router.get(/^\/u\/(f[0-9a-f]{66})$/, handleChatKey)
+router.get(/^\/u\/(f[0-9a-fA-F]{66})$/, quickRedirect)
 router.get(/^\/u\/(f[0-9a-fA-F]+)$/, handleError('Incorrect length of chat key'))
-router.get(/^\/u\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey)
+router.get(/^\/u\/(0[xX]04[0-9a-f]{128})$/, handleChatKey)
+router.get(/^\/u\/(0[xX]04[0-9a-fA-F]{128})$/, quickRedirect)
 router.get(/^\/u\/(0[xX]04[0-9a-fA-F]+)$/, handleError('Incorrect length of chat key'))
-router.get(/^\/user\/(0[xX]04[0-9a-fA-F]{128})$/, handleChatKey) /* Legacy */
+router.get(/^\/user\/(0[xX]04[0-9a-f]{128})$/, handleChatKey) /* Legacy */
+router.get(/^\/user\/(0[xX]04[0-9a-fA-F]{128})$/, quickRedirect) /* Legacy */
 
 router.get(/^\/u\/([^><]*[A-Z]+[^><]*)$/, handleRedirect)
 router.get(/^\/u\/([^<>]+)$/, handleEnsName)
