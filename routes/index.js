@@ -2,6 +2,7 @@ const path = require('path')
 const QRCode = require('qrcode')
 const express = require('express')
 const StatusIm = require('js-status-chat-name')
+const logo = require('../resources/logo.js')
 const links = require('../resources/links.json')
 const assetLinks = require('../resources/assetlinks.json')
 const appleSiteAssociation = require('../resources/apple-app-site-association.json')
@@ -16,8 +17,10 @@ const genPage = (req, res, options) => {
     handleError(`Input contains HTML: ${options.mainTarget}`)(req, res)
     return
   }
-  let qrUrl = genUrl(req, options.path)
-  res.render('index', { ...options, qrUrl })
+  let fullUrl = genUrl(req, options.path)
+  let qrUrl = genQrUrl(req, fullUrl, false)
+  let qrCardUrl = genQrUrl(req, fullUrl, true)
+  res.render('index', { ...options, fullUrl, qrUrl, qrCardUrl })
 }
 
 /* Helper for full URLs, can specify optional path */
@@ -27,11 +30,22 @@ const genUrl = (req, path) => {
     return `status-im:/${path}`
   }
   /* QR code doesn't work if localhost is used */
-  if (process.env.NODE_ENV == 'development') {
+  if (process.env.NODE_ENV == 'production') {
     return `https://join.status.im${path}`
   }
   /* Otherwise just use current server endpoint */
-  return `${req.protocol}://${req.hostname}${path}`
+  return `${req.protocol}://${req.get('host')}${path}`
+}
+
+/* Helper for generating URL of contact QR code. */
+const genQrUrl = (req, url, card) => {
+  let path = card ? 'qr_card' : 'qr'
+  let data = encodeURIComponent(url)
+  if (process.env.NODE_ENV == 'production') {
+    return `https://join.status.im/${path}/${data}`
+  } else {
+    return `${req.protocol}://${req.get('host')}/${path}/${data}`
+  }
 }
 
 /* Helper for returning syntax errors */
@@ -54,7 +68,7 @@ const handleRedirect = (req, res) => {
     return
   }
   res.render('index', {
-    title: 'Redirecting form upper case',
+    title: `Redirecting form upper case: ${req.originalUrl}`,
     redirect: {
       name: req.params[0].toLowerCase(),
       path: req.originalUrl.toLowerCase(),
@@ -175,8 +189,24 @@ router.get('/.well-known/apple-app-site-association', (req, res) => {
 
 router.get('/qr/:data(*)', async (req, res) => {
   res.type('image/svg+xml').send(
-    await QRCode.toString(req.params.data, {width: 300, type: 'svg'})
+    await QRCode.toString(
+      decodeURIComponent(req.params.data),
+      {width: 500, type: 'svg'}
+    )
   )
+})
+
+router.get('/qr_card/:data(*)', async (req, res) => {
+  let qr = await QRCode.toString(
+    decodeURIComponent(req.params.data),
+    {width: 500, type: 'svg'}
+  )
+  res.type('image/svg+xml').send(`
+<svg width="1000" height="500" version="1.1" style="background-color:white" xmlns="http://www.w3.org/2000/svg">
+  <svg x="50" y="150" width="400" height="200" viewBox="0 0 118 45">${logo}</svg>
+  <svg x="500" y="10" width="500" height="500">${qr}</svg>
+</svg>
+`.trim())
 })
 
 router.get('/health', (req, res) => res.send('OK'))

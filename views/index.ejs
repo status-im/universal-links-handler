@@ -1,14 +1,34 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <%if (locals.error) { %>
+<% if (locals.error) { -0%>
     <title><%= error.message %></title>
-    <% } else { %>
+<% } else { -%>
     <title><%= title %></title>
-    <% } %>
+<% } -%>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <% if (locals.path) { %>
+    <meta property="og:site_name" content="Join Status" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="Status — A secure messaging app, crypto wallet, and Web3 browser" />
+<% if (locals.error) { -%>
+    <meta property="og:title" content="<%= error.message %>" />
+<% } else { -%>
+    <meta property="og:title" content="<%= title %>" />
+<% } -%>
+<% if (locals.fullUrl) { -%>
+    <meta property="og:url" content="<%= fullUrl %>" />
+<% } -%>
+<% if (locals.qrCardUrl) { -%>
+    <meta property="og:image" content="<%= qrCardUrl %>" />
+<% } else { -%>
+    <meta property="og:image" content="https://join.status.im/img/logo.svg" />
+<% } -%>
+
+    <!-- Formatting for Twitter link unfurling to fit QR code. -->
+    <meta name="twitter:card" content="summary_large_image">
+
+<% if (locals.path) { -%>
     <meta property="status-im:target" content="<%= mainTarget %>" />
 
     <meta property="al:ios:url" content="status-im:/<%= path %>" />
@@ -18,7 +38,8 @@
     <meta property="al:android:url" content="status-im:/<%= path %>" />
     <meta property="al:android:package" content="im.status.ethereum" />
     <meta property="al:android:app_name" content="Status — Ethereum. Anywhere" />
-    <% } %>
+<% } -%>
+
     <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
