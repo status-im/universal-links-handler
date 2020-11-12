@@ -2,8 +2,8 @@
 <section class="py-24 xl:py-40">
   <div class="max-w-xl mx-auto px-8 lg:px-12 align-center">
     <h3 id="header" class="break-word text-center font-display text-5xl"><%- headerName %></h3>
-    <%if (locals.qrUri) { %>
-    <img class="border border-solid border-gray-100 rounded-sm mt-8" src="<%= qrUri %>" />
+    <%if (locals.qrUrl) { %>
+    <img class="border border-solid border-gray-100 rounded-sm mt-8" src="/qr/<%= encodeURIComponent(qrUrl) %>" />
     <% } %>
     <div class="copy border border-solid border-gray-100 rounded-sm flex items-center justify-between p-6 my-4 h-20">
       <div id="copy-target" class="w-3/4 inner truncate"><%= mainTarget %></div>

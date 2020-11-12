@@ -1,4 +1,5 @@
 const path = require('path')
+const QRCode = require('qrcode')
 const express = require('express')
 const StatusIm = require('js-status-chat-name')
 const links = require('../resources/links.json')
@@ -16,10 +17,7 @@ const genPage = (req, res, options) => {
     return
   }
   let qrUrl = genUrl(req, options.path)
-  utils.makeQrCodeDataUri(qrUrl).then(
-    qrUri => res.render('index', { ...options, qrUri }),
-    error => res.render('index', options)
-  )
+  res.render('index', { ...options, qrUrl })
 }
 
 /* Helper for full URLs, can specify optional path */
@@ -173,6 +171,12 @@ router.get('/.well-known/assetlinks.json', (req, res) => {
 
 router.get('/.well-known/apple-app-site-association', (req, res) => {
   res.json(appleSiteAssociation)
+})
+
+router.get('/qr/:data(*)', async (req, res) => {
+  res.type('image/svg+xml').send(
+    await QRCode.toString(req.params.data, {width: 300, type: 'svg'})
+  )
 })
 
 router.get('/health', (req, res) => res.send('OK'))

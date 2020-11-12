@@ -1,4 +1,3 @@
-const QRCode = require('qrcode')
 const uts46 = require('idna-uts46-hx')
 const isHtml = require('is-html')
 const univeil = require('univeil')
@@ -12,10 +11,6 @@ const isAndroid = (req) => (
 
 const isIOS = (req) => (
   req.headers['user-agent'].toLowerCase().indexOf("iphone") > -1
-)
-
-const makeQrCodeDataUri = (x) => (
-  QRCode.toDataURL(x, {width: 300})
 )
 
 const isValidUrl = (text, useStd3ASCII=true) => {
@@ -66,7 +61,6 @@ const decompressKey = (key) => {
 module.exports = {
   isAndroid,
   isIOS,
-  makeQrCodeDataUri,
   isValidUrl,
   normalizeEns,
   showSpecialChars,
