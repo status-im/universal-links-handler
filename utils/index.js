@@ -1,4 +1,5 @@
 const uts46 = require('idna-uts46-hx')
+const QRCode = require('qrcode')
 const isHtml = require('is-html')
 const univeil = require('univeil')
 const { Buffer } = require('buffer')
@@ -35,6 +36,13 @@ const isValidUrl = (text, useStd3ASCII=true) => {
   return true
 }
 
+const genQrSvg = async (raw) => {
+  let data = decodeURIComponent(raw)
+  return await QRCode.toString(data, {width: 500, type: 'svg'})
+}
+
+const makeUrl = (req, path) => `${req.protocol}://${req.get('host')}${path ? path : ''}`
+
 const normalizeEns = (name) => (
   name ? uts46.toUnicode(name, {useStd3ASCII: true}) : name
 )
@@ -62,6 +70,8 @@ module.exports = {
   isAndroid,
   isIOS,
   isValidUrl,
+  genQrSvg,
+  makeUrl,
   normalizeEns,
   showSpecialChars,
   decompressKey,
