@@ -8,8 +8,10 @@ import assetLinks from '../resources/assetlinks.json'
 import appleSiteAssociation from '../resources/apple-app-site-association.json'
 
 const host = 'join.status.im'
+const proto = 'https'
+const url = `${proto}://${host}`
 const srv = request(app)
-const get = (path) => srv.get(path).set('Host', host)
+const get = (path) => srv.get(path).set('Host', host).set('X-Forwarded-Proto', proto)
 
 /* helpers for querying returned HTML */
 const q = (res, query) => cheerio.load(res.text)(query)
@@ -192,18 +194,24 @@ test('group chat routes', t => {
 })
 
 test('qr code routes', t => {
-  t.test('/qr/test', async t => {
-    const res = await get('/qr/test')
+  t.test(`/qr/${url}/qr/test - VALID`, async t => {
+    const res = await get(`/qr/${url}/u/test`)
     t.eq(res.status, 200, 'returns 200')
     t.eq(res.type, 'image/svg+xml', 'type is svg')
-    t.eq(res.body.length, 969, 'correct length') /* TODO: weak test */
+    t.eq(res.body.length, 1491, 'correct length') /* TODO: weak test */
   })
 
-  t.test('/qr_card/test', async t => {
-    const res = await get('/qr_card/test')
+  t.test('/qr/https://example.org/u/fail - INVALID', async t => {
+    const res = await get('/qr/https://example.org/u/fail')
+    t.eq(res.status, 400, 'returns 400')
+    t.eq(res.text, 'Invalid data!', 'returns error')
+  })
+
+  t.test(`/qr_card/${url}/u/test - VALID`, async t => {
+    const res = await get(`/qr_card/${url}/u/test`)
     t.eq(res.status, 200, 'returns 200')
     t.eq(res.type, 'image/svg+xml', 'type is svg')
-    t.eq(res.body.length, 9275, 'correct length') /* TODO: weak test */
+    t.eq(res.body.length, 9797, 'correct length') /* TODO: weak test */
   })
 })
 

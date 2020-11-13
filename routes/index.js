@@ -1,5 +1,4 @@
 const path = require('path')
-const QRCode = require('qrcode')
 const express = require('express')
 const StatusIm = require('js-status-chat-name')
 const logo = require('../resources/logo.js')
@@ -30,22 +29,13 @@ const genUrl = (req, path) => {
     return `status-im:/${path}`
   }
   /* QR code doesn't work if localhost is used */
-  if (process.env.NODE_ENV == 'production') {
-    return `https://join.status.im${path}`
-  }
-  /* Otherwise just use current server endpoint */
-  return `${req.protocol}://${req.get('host')}${path}`
+  return utils.makeUrl(req, path)
 }
 
 /* Helper for generating URL of contact QR code. */
 const genQrUrl = (req, url, card) => {
   let path = card ? 'qr_card' : 'qr'
-  let data = encodeURIComponent(url)
-  if (process.env.NODE_ENV == 'production') {
-    return `https://join.status.im/${path}/${data}`
-  } else {
-    return `${req.protocol}://${req.get('host')}/${path}/${data}`
-  }
+  return utils.makeUrl(req, `/${path}/${encodeURIComponent(url)}`)
 }
 
 /* Helper for returning syntax errors */
@@ -187,24 +177,26 @@ router.get('/.well-known/apple-app-site-association', (req, res) => {
   res.json(appleSiteAssociation)
 })
 
-router.get('/qr/:data(*)', async (req, res) => {
-  res.type('image/svg+xml').send(
-    await QRCode.toString(
-      decodeURIComponent(req.params.data),
-      {width: 500, type: 'svg'}
-    )
-  )
+/* Don't allow generating QR code that don't start with our URL */
+const validateQrData = (req) => req.params.data.startsWith(utils.makeUrl(req))
+
+router.get('/qr/:data(*)', async (req, res, next) => {
+  if (!validateQrData(req)) {
+    res.status(400).send('Invalid data!')
+    return
+  }
+  res.type('image/svg+xml').send(await utils.genQrSvg(req.params.data))
 })
 
 router.get('/qr_card/:data(*)', async (req, res) => {
-  let qr = await QRCode.toString(
-    decodeURIComponent(req.params.data),
-    {width: 500, type: 'svg'}
-  )
+  if (!validateQrData(req)) {
+    res.status(400).send('Invalid data!')
+    return
+  }
   res.type('image/svg+xml').send(`
 <svg width="1000" height="500" version="1.1" style="background-color:white" xmlns="http://www.w3.org/2000/svg">
   <svg x="50" y="150" width="400" height="200" viewBox="0 0 118 45">${logo}</svg>
-  <svg x="500" y="10" width="500" height="500">${qr}</svg>
+  <svg x="500" y="10" width="500" height="500">${await utils.genQrSvg(req.params.data)}</svg>
 </svg>
 `.trim())
 })
