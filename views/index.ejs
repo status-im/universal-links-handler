@@ -26,7 +26,10 @@
 <% } -%>
 
     <!-- Formatting for Twitter link unfurling to fit QR code. -->
-    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@ethstatus" />
+    <meta property="twitter:image" content="<%= rootUrl %>/img/logo.jpg" />
+    <meta property="twitter:image:alt" content="Status logo" />
 
 <% if (locals.path) { -%>
     <meta property="status-im:target" content="<%= mainTarget %>" />

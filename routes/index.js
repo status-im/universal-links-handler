@@ -201,6 +201,9 @@ router.get('/qr_card/:data(*)', async (req, res) => {
 `.trim())
 })
 
+/* provide rootUrl to all templates */
+router.use((req, res, next) => { res.app.locals.rootUrl = utils.makeUrl(req); next(); })
+
 router.get('/health', (req, res) => res.send('OK'))
 
 router.get('/b/:url(*)', handleSite)      
