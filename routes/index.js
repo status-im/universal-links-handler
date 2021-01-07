@@ -19,7 +19,8 @@ const genPage = (req, res, options) => {
   let fullUrl = genUrl(req, options.path)
   let qrUrl = genQrUrl(req, fullUrl, false)
   let qrCardUrl = genQrUrl(req, fullUrl, true)
-  res.render('index', { ...options, fullUrl, qrUrl, qrCardUrl })
+  let rootUrl = utils.makeUrl(req);
+  res.render('index', { ...options, fullUrl, qrUrl, qrCardUrl, rootUrl })
 }
 
 /* Helper for full URLs, can specify optional path */
