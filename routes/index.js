@@ -101,6 +101,7 @@ const handleChatKey = (req, res) => {
     mainTarget: chatKey,
     headerName: chatName,
     path: req.originalUrl,
+    noindex: true,
   })
 }
 
@@ -120,6 +121,7 @@ const handleEnsName = (req, res) => {
     mainTarget: username,
     headerName: `@${utils.showSpecialChars(username)}`,
     path: req.originalUrl,
+    noindex: true,
   })
 }
 
@@ -166,6 +168,7 @@ const handleGroupChat = (req, res) => {
     mainTarget: groupName, 
     headerName: groupName,
     path: req.originalUrl,
+    noindex: true,
   })
 }
 
