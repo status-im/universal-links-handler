@@ -17,11 +17,13 @@ const get = (path) => srv.get(path).set('Host', host).set('X-Forwarded-Proto', p
 const q = (res, query) => cheerio.load(res.text)(query)
 const html = (res, query) => (cheerio.load(res.text)(query).html() || "").trim()
 const meta = (res, name) => q(res, `meta[property="${name}"]`).attr('content')
+const robo = (res) => q(res, 'meta[name="robots"]').attr('content')
 
 test('test browser routes', t => {
   t.test('/b/ens.domains - VALID', async t => {
     const res = await get('/b/ens.domains')
     t.eq(res.status, 200, 'returns 200')
+    t.eq(robo(res), undefined, 'indexing is enabled')
     t.eq(meta(res, 'status-im:target'), 'ens.domains', 'contains target')
     t.eq(meta(res, 'al:ios:url'), 'status-im://b/ens.domains', 'contains ios url')
     t.eq(meta(res, 'al:android:url'), 'status-im://b/ens.domains', 'contains android url')
@@ -47,6 +49,7 @@ test('test user ens routes', t => {
   t.test('/u/jakubgs.eth - VALID', async t => {
     const res = await get('/u/jakubgs.eth')
     t.eq(res.status, 200, 'returns 200')
+    t.eq(robo(res), 'noindex', 'indexing is disabled')
     t.eq(meta(res, 'al:ios:url'), 'status-im://u/jakubgs.eth', 'contains ios url')
     t.eq(meta(res, 'al:android:url'), 'status-im://u/jakubgs.eth', 'contains android url')
     t.eq(html(res, 'div#info'), 'Chat and transact with <span class=\"inline-block align-bottom w-32 truncate\">@jakubgs.eth</span> in Status.', 'contains prompt')
@@ -75,6 +78,7 @@ test('test chat key routes', t => {
   t.test(`/u/0x04${chatKey.substr(0,8)}... - VALID`, async t => {
     const res = await get(`/u/0x04${chatKey}`)
     t.eq(res.status, 200, 'returns 200')
+    t.eq(robo(res), 'noindex', 'indexing is disabled')
     t.eq(meta(res, 'al:ios:url'), `status-im://u/0x04${chatKey}`, 'contains ios url')
     t.eq(meta(res, 'al:android:url'), `status-im://u/0x04${chatKey}`, 'contains android url')
     t.eq(html(res, 'div#info'), `Chat and transact with <span class=\"inline-block align-bottom w-32 truncate\">0x04${chatKey}</span> in Status.`, 'contains prompt')
@@ -107,6 +111,7 @@ test('test multibase chat key routes', t => {
   t.test(`/u/${multibaseKey.substr(0,12)}... - VALID`, async t => {
     const res = await get(`/u/${multibaseKey}`)
     t.eq(res.status, 200, 'returns 200')
+    t.eq(robo(res), 'noindex', 'indexing is disabled')
     t.eq(meta(res, 'al:ios:url'), `status-im://u/${multibaseKey}`, 'contains ios url')
     t.eq(meta(res, 'al:android:url'), `status-im://u/${multibaseKey}`, 'contains android url')
     t.eq(html(res, 'div#info'), `Chat and transact with <span class=\"inline-block align-bottom w-32 truncate\">${multibaseKey}</span> in Status.`, 'contains prompt')
@@ -126,6 +131,7 @@ test('test compressed chat key routes', t => {
   t.test(`/u/${compressedKey.substr(0,12)}... - VALID`, async t => {
     const res = await get(`/u/${compressedKey}`)
     t.eq(res.status, 200, 'returns 200')
+    t.eq(robo(res), 'noindex', 'indexing is disabled')
     t.eq(meta(res, 'al:ios:url'), `status-im://u/${compressedKey}`, 'contains ios url')
     t.eq(meta(res, 'al:android:url'), `status-im://u/${compressedKey}`, 'contains android url')
     t.eq(html(res, 'div#info'), `Chat and transact with <span class=\"inline-block align-bottom w-32 truncate\">${compressedKey}</span> in Status.`, 'contains prompt')
@@ -143,6 +149,7 @@ test('test public channel routes', t => {
   t.test('/status-test - VALID', async t => {
     const res = await get('/status-test')
     t.eq(res.status, 200, 'returns 200')
+    t.eq(robo(res), undefined, 'indexing is enabled')
     t.eq(meta(res, 'al:ios:url'), 'status-im://status-test', 'contains ios url')
     t.eq(meta(res, 'al:android:url'), 'status-im://status-test', 'contains android url')
     t.eq(html(res, 'div#info'), 'Join public channel <span class=\"inline-block align-bottom w-32 truncate\">#status-test</span> in Status.', 'contains prompt')
@@ -166,6 +173,7 @@ test('group chat routes', t => {
   t.test('/g/args?a1=Secret%20Club&... - VALID', async t => {
     const res = await get(`/g/args?a=${adminKey}&a1=${groupName}&a2=${groupKey}`)
     t.eq(res.status, 200, 'returns 200')
+    t.eq(robo(res), 'noindex', 'indexing is disabled')
     t.eq(meta(res, 'al:ios:url'), `status-im://g/args?a=${adminKey}&a1=${groupName}&a2=${groupKey}`, 'contains ios url')
     t.eq(meta(res, 'al:android:url'), `status-im://g/args?a=${adminKey}&a1=${groupName}&a2=${groupKey}`, 'contains android url')
     t.eq(html(res, 'div#info'), 'Join group chat <span class=\"inline-block align-bottom w-32 truncate\">Secret Club</span> in Status.', 'contains prompt')
