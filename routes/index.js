@@ -154,6 +154,12 @@ const validateGroupChatArgs = (args) => {
 
 /* Open Group Chat in Status */
 const handleGroupChat = (req, res) => {
+  /* Ugly fix for broken #mestresdobitcoin group chat.
+   * See: https://github.com/status-im/status-react/issues/12025 */
+  if (req.query['a1'] == '' && req.query['a2'] == undefined) {
+    res.redirect(302, 'https://status.im/get/')
+    return
+  }
   try {
     validateGroupChatArgs(req.query)
   } catch(ex) {
