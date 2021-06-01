@@ -44,7 +44,7 @@ It will build the image and start the container listening on port `8080`
 yarn run tests
 ```
 
-CI: https://jenkins.status.im/job/misc/job/universal-links-handler/
+CI: https://ci.status.im/job/website/job/join.status.im/
 
 ## Deployment
 
