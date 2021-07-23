@@ -16,20 +16,10 @@ const genPage = (req, res, options) => {
     handleError(`Input contains HTML: ${options.mainTarget}`)(req, res)
     return
   }
-  let fullUrl = genUrl(req, options.path)
+  let fullUrl = utils.makeUrl(req, options.path)
   let qrUrl = genQrUrl(req, fullUrl, false)
   let qrCardUrl = genQrUrl(req, fullUrl, true)
   res.render('index', { ...options, fullUrl, qrUrl, qrCardUrl })
-}
-
-/* Helper for full URLs, can specify optional path */
-const genUrl = (req, path) => {
-  /* Make button open user profile if on Android */
-  if (utils.isAndroid(req)) {
-    return `status-im:/${path}`
-  }
-  /* QR code doesn't work if localhost is used */
-  return utils.makeUrl(req, path)
 }
 
 /* Helper for generating URL of contact QR code. */
