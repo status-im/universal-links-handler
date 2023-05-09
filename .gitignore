@@ -26,3 +26,6 @@ benchmarks/graphs
 
 # Jetbrains
 .idea
+
+/status-js-sdk/sdk.js
+/status-js-sdk/sdk.js.LICENSE.txt

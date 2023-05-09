@@ -4,11 +4,14 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
+    "postinstall": "yarn run build:@status-im/js",
+    "build:@status-im/js": "yarn run webpack --config status-js-sdk/webpack.config.js",
     "watch": "NODE_ENV=development nodemon ./bin/www",
     "docker": "yarn run tests && docker build -t statusteam/universal-links-handler:deploy .",
     "tests": "node -r esm tests/main.js | tap-color"
   },
   "dependencies": {
+    "@status-im/js": "^0.2.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "ejs": "~2.5.7",
@@ -16,6 +19,7 @@
     "http-errors": "~1.6.2",
     "idna-uts46-hx": "^3.2.2",
     "is-html": "^2.0.0",
+    "isomorphic-ws": "^5.0.0",
     "js-status-chat-name": "git+https://github.com/status-im/js-status-chat-name.git#v0.1.2",
     "morgan": "^1.9.1",
     "multibase": "^1.0.1",
@@ -29,6 +33,12 @@
     "nodemon": "^1.17.5",
     "supertest": "^4.0.2",
     "tap-color": "^1.2.0",
+    "webpack": "^5.82.0",
+    "webpack-cli": "^5.1.0",
     "zora": "^3.1.8"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.7",
+    "utf-8-validate": "^6.0.3"
   }
 }
