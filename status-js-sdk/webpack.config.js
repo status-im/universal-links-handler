@@ -11,5 +11,5 @@ module.exports = {
     // to load js-waku based on its `exports.import` in package.json
     conditionNames: ["require", "import"],
   },
-  // optimization: { minimize: false },
+  optimization: { minimize: false },
 };

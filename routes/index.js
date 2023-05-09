@@ -1,4 +1,3 @@
-const path = require('path')
 const express = require('express')
 const StatusIm = require('js-status-chat-name')
 const logo = require('../resources/logo.js')
@@ -6,6 +5,7 @@ const links = require('../resources/links.json')
 const assetLinks = require('../resources/assetlinks.json')
 const appleSiteAssociation = require('../resources/apple-app-site-association.json')
 const utils = require('../utils')
+const { fetchUser } = require('../status-js-sdk/index.js')
 
 const router = express.Router()
 
@@ -70,7 +70,7 @@ const handleSite = (req, res) => {
 }
 
 /* Open User Profile from Chat Key in Status */
-const handleChatKey = (req, res) => {
+const handleChatKey = async (req, res) => {
   let chatKey = req.params[0]
   let uncompressedKey = chatKey
   try {
@@ -80,7 +80,10 @@ const handleChatKey = (req, res) => {
       chatKey = chatKey.toLowerCase()
     }
     chatName = StatusIm.chatKeyToChatName(uncompressedKey)
+    const user = await fetchUser(uncompressedKey)
+    console.log("user = ", user);
   } catch(error) {
+    console.error(`Failed to parse: "${uncompressedKey}", Error:`, error)
     console.error(`Failed to parse: "${uncompressedKey}", Error:`, error.message)
     res.render('index', { title: 'Invalid chat key format!', error })
     return
@@ -101,6 +104,7 @@ const handleEnsName = (req, res) => {
   try {
     username = utils.normalizeEns(req.params[0])
   } catch(error) { /* ENS names have the widest regex: .+ */
+    console.error(`Failed to parse: "${req.params[0]}", Error:`, error)
     console.error(`Failed to parse: "${req.params[0]}", Error:`, error.message)
     res.render('index', { title: 'Invalid username format!', error })
     return
